@@ -1,0 +1,37 @@
+.snackBar{
+    width: 300px;
+    position: fixed;
+    background-color: blue;
+    height: 28px;
+    border-radius: 10px;
+    bottom: 23px;
+    left: 14px;
+    z-index: 80;
+    animation-name: example;
+    animation-duration: 2s;
+  }
+  
+  .closeLabel{
+    margin-left: 93%;
+    margin-top: 3px;
+    position: absolute;
+    color: oldlace;
+    cursor: pointer;
+  }
+  
+  .dataset{
+    position: absolute;
+    margin-left: 4px;
+    margin-top: 3px;
+    color: oldlace;
+  }
+  
+  .hide{
+    display: none
+  }
+
+  @keyframes example {
+    0%   {left:14px; bottom:0px;}
+    25%  {left:14px; bottom:23px;}
+    100% {left:14px; bottom:23px;}
+  }
