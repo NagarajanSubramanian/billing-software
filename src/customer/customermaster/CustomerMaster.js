@@ -1,6 +1,6 @@
 import React from "react";
 import FormDialog from "../../components/dialog/Dialog";
-import Fab from "@material-ui/core/Fab";
+import Fab from "./../../components/fab/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import "./CustomerMaster.css";
 
@@ -13,14 +13,7 @@ const customerdetails = React.forwardRef((props, ref) => {
 
   return (
     <React.Fragment>
-      <Fab
-        id="add-new-button"
-        variant="round"
-        color="primary"
-        onClick={onAddClick}
-      >
-        <AddIcon />
-      </Fab>
+      <Fab id="customermaster-add" onClick={onAddClick} />
       <FormDialog
         open={open}
         onCancelClick={() => props.onCancelClick()}

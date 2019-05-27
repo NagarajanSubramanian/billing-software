@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import CustomerDetails from "./customer/customermaster/CustomerMaster";
+import CustomerMaster from "./customer/customermaster/CustomerMaster";
 import SideDrawer from "./components/sidedrawer/SideDrawer";
 
 class App extends React.Component {
@@ -8,7 +8,6 @@ class App extends React.Component {
     return (
       <React.Fragment>
         <SideDrawer />
-        <CustomerDetails />
       </React.Fragment>
     );
   }

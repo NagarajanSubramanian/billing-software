@@ -60,11 +60,11 @@ function SideDrawer(props) {
               </ListItem>
             ))}
           </List>
-          <Switch>
-            <Route exact path="/CustomerMaster" component={CustomerDetails} />
-            <Route exact path="/ProductMaster" component={ProductDetails} />
-          </Switch>
         </Drawer>
+        <Switch>
+          <Route exact path="/CustomerMaster" component={CustomerDetails} />
+          <Route exact path="/ProductMaster" component={ProductDetails} />
+        </Switch>
       </div>
     </Router>
   );

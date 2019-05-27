@@ -19,9 +19,6 @@ const FormDialog = props => {
 
   return (
     <div style={{ marginLeft: 50 }}>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Open form dialog
-      </Button>
       <Dialog
         open={props.open}
         onClose={handleClose}
