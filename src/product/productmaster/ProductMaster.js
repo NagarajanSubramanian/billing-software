@@ -8,6 +8,7 @@ const ProductMaster = () => {
   const onAddClick = () => {
     setOpen(true);
   };
+
   return (
     <div>
       <Fab id="productmaster-add" onClick={onAddClick} />
