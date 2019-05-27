@@ -1,13 +1,35 @@
-import React from 'react';
-import Dialog from './../../components/dialog/dialog';
+import React from "react";
+import FormDialog from "./../../components/dialog1/Dialog";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
+import "./CustomerDetails.css";
 
 const customerdetails = React.forwardRef((props, ref) => {
-    return (
-      <React.Fragment>
-         <Dialog ref={ref} dialogShow={props.dialogShow} 
-            onCancelClick={() => props.onCancelClick()} onSaveClick={(data)=>props.onSaveClick(data)}></Dialog> 
-      </React.Fragment>  
-    );
+  const [open, setOpen] = React.useState(false);
+
+  const onAddClick = () => {
+    setOpen(true);
+  };
+
+  return (
+    <React.Fragment>
+      <Fab
+        id="add-new-button"
+        variant="round"
+        color="primary"
+        onClick={onAddClick}
+      >
+        <AddIcon />
+      </Fab>
+      <FormDialog
+        open={open}
+        onCancelClick={() => props.onCancelClick()}
+        onSaveClick={data => props.onSaveClick(data)}
+      >
+        Add New Customer{" "}
+      </FormDialog>
+    </React.Fragment>
+  );
 });
 
 export default customerdetails;
