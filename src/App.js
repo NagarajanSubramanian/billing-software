@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import CustomerDetails from "./customer/customerdetails/customerdetails";
 import Toastr from "./components/toastr/toastr";
-import SideDrawer from "./components/sidedrawer/sidedrawer";
+import SideDrawer from "./components/sidedrawer/SideDrawer";
 
 class App extends React.Component {
   constructor(props) {
@@ -15,7 +15,7 @@ class App extends React.Component {
       customerMobile: React.createRef()
     };
 
-    this.onCancelClick = this.onCancelClick.bind(this);
+    // this.onCancelClick = this.onCancelClick.bind(this);
     this.onCustomerSaveClick = this.onCustomerSaveClick.bind(this);
 
     this.state = {
