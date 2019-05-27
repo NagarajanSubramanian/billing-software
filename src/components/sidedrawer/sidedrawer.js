@@ -7,6 +7,9 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import { makeStyles } from "@material-ui/core/styles";
+import { BrowserRouter as Router, Switch, Link, Route } from "react-router-dom";
+import ProductDetails from "../../product/productmaster/ProductMaster";
+import CustomerDetails from "../../customer/customermaster/CustomerMaster";
 import "./SideDrawer.css";
 
 const drawerWidth = 240;
@@ -24,36 +27,46 @@ function SideDrawer(props) {
   };
 
   return (
-    <div>
-      <AppBar position="fixed">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Billing - Software
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        anchor="left"
-        classes={{
-          paper: classes.drawerPaper
-        }}
-      >
-        <Divider />
-        <List id="sidedrawer-list">
-          {["Customer Master", "Product Master"].map((text, index) => (
-            <ListItem
-              button
-              id={text}
-              key={text}
-              onClick={clickSideMenuHandler}
-            >
-              {text}
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-    </div>
+    <Router>
+      <div>
+        <AppBar position="fixed">
+          <Toolbar>
+            <Typography variant="h6" color="inherit" noWrap>
+              Billing - Software
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          variant="permanent"
+          anchor="left"
+          classes={{
+            paper: classes.drawerPaper
+          }}
+        >
+          <Divider />
+          <List id="sidedrawer-list">
+            {[
+              { name: "Home", path: "/" },
+              { name: "Customer Master", path: "/CustomerMaster" },
+              { name: "Product Master", path: "/ProductMaster" }
+            ].map((text, index) => (
+              <ListItem
+                button
+                id={text.name}
+                key={text.name}
+                onClick={clickSideMenuHandler}
+              >
+                <Link to={text.path}>{text.name}</Link>
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+        <Switch>
+          <Route exact path="/CustomerMaster" component={CustomerDetails} />
+          <Route exact path="/ProductMaster" component={ProductDetails} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
