@@ -1,8 +1,8 @@
 import React from "react";
-import FormDialog from "./../../components/dialog1/Dialog";
+import FormDialog from "../../components/dialog/Dialog";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
-import "./CustomerDetails.css";
+import "./CustomerMaster.css";
 
 const customerdetails = React.forwardRef((props, ref) => {
   const [open, setOpen] = React.useState(false);
