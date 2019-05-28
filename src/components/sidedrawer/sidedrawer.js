@@ -17,7 +17,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { BrowserRouter as Router, Switch, Link, Route } from "react-router-dom";
 import ProductDetails from "../../product/productmaster/ProductMaster";
 import CustomerDetails from "../../customer/customermaster/CustomerMaster";
 import "./SideDrawer.css";
@@ -62,13 +61,13 @@ function SideDrawer(props) {
   const [appName, changeAppName] = React.useState('Home');
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
 
-  function handleDrawerOpen() {
+   const handleDrawerOpen = () => {
     setOpen(true);
   }
 
-  function handleDrawerClose() {
+  const handleDrawerClose = () => {
     setOpen(false);
   }
   const clickSideMenuHandler = event => {
@@ -107,7 +106,6 @@ function SideDrawer(props) {
   }
 
   return (
-    <Router>
       <div>
       <AppBar
         position="fixed"
@@ -147,9 +145,9 @@ function SideDrawer(props) {
         <Divider />
           <List id="sidedrawer-list">
             {[
-              { id: 'home', name: "Home", path: "/", icon: 'home'},
-              { id: 'customerdetails', name: "Customer Details", path: "/CustomerMaster", icon:'people' },
-              { id: 'productdetails', name: "Product Details", path: "/ProductMaster", icon:'apps' }
+              { id: 'home', name: "Home", icon: 'home'},
+              { id: 'customerdetails', name: "Customer Details", icon:'people' },
+              { id: 'productdetails', name: "Product Details", icon:'apps' }
             ].map((text, index) => (
               <ListItem
                 button
@@ -165,7 +163,6 @@ function SideDrawer(props) {
         </Drawer>
         {setScreenVisible(initial)}
       </div>
-    </Router>
   );
 }
 
