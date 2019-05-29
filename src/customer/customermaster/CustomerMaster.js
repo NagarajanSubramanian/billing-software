@@ -1,7 +1,7 @@
 import React from "react";
 import FormDialog from "../../components/dialog/dialog";
 import Fab from "./../../components/fab/Fab";
-import TextField from '@material-ui/core/TextField';
+import TextField from "@material-ui/core/TextField";
 import "./CustomerMaster.css";
 
 const customerdetails = React.forwardRef((props, ref) => {
@@ -17,16 +17,16 @@ const customerdetails = React.forwardRef((props, ref) => {
   };
 
   const onCancelClick = () => {
-      setOpen(false);
+    setOpen(false);
   };
 
-  const onKeyPress = (event) => {
-    if(event.target.id === 'mobile'){
-      if(phoneNoRef.current.value && phoneNoRef.current.value.length >= 10){
+  const onKeyPress = event => {
+    if (event.target.id === "mobile") {
+      if (phoneNoRef.current.value && phoneNoRef.current.value.length >= 10) {
         event.preventDefault();
       }
     }
-  }
+  };
 
   return (
     <React.Fragment>
@@ -35,43 +35,44 @@ const customerdetails = React.forwardRef((props, ref) => {
         open={open}
         onCancelClick={() => onCancelClick()}
         onSaveClick={data => props.onSaveClick(data)}
-        dialogTitle='Add New Customer'
+        dialogTitle="Add New Customer"
       >
         <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Customer Name"
-            type="text"
-            inputRef={nameRef}
-            fullWidth
-          />
-          <TextField
-            margin="normal"
-            id="address"
-            multiline
-            rowsMax="4"
-            label="Customer Address"
-            inputRef={addressRef}
-            type="text"
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            id="mobile"
-            label="Mobile No."
-            inputRef={phoneNoRef}
-            type="number" onKeyPress={onKeyPress}
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            id="email"
-            label="Email"
-            type="email"
-            inputRef={emailRef}
-            fullWidth
-          />
+          autoFocus
+          margin="dense"
+          id="name"
+          label="Customer Name"
+          type="text"
+          inputRef={nameRef}
+          fullWidth
+        />
+        <TextField
+          margin="normal"
+          id="address"
+          multiline
+          rowsMax="4"
+          label="Customer Address"
+          inputRef={addressRef}
+          type="text"
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          id="mobile"
+          label="Mobile No."
+          inputRef={phoneNoRef}
+          type="number"
+          onKeyPress={onKeyPress}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          id="email"
+          label="Email"
+          type="email"
+          inputRef={emailRef}
+          fullWidth
+        />
       </FormDialog>
     </React.Fragment>
   );
