@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
-import CustomerMaster from "./customer/customermaster/CustomerMaster";
-import SideDrawer from "./components/sidedrawer/SideDrawer";
+import SideDrawer from "./components/sidedrawer/sidedrawer";
 
 class App extends React.Component {
   render() {
