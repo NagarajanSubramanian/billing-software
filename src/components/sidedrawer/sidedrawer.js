@@ -19,7 +19,6 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import ProductDetails from "../../product/productmaster/ProductMaster";
 import CustomerDetails from "../../customer/customermaster/CustomerMaster";
-import "./SideDrawer.css";
 
 const drawerWidth = 240;
 
@@ -153,7 +152,7 @@ function SideDrawer(props) {
                 button
                 id={text.id}
                 key={text.id}
-                selected={text.id === initial ? 'true' : ''}
+                selected={text.id === initial ? true : false}
                 onClick={clickSideMenuHandler}>
                 <ListItemIcon>{checkDisplayingDrawerIcon(text.icon)}</ListItemIcon>
                 <ListItemText primary={text.name} />
@@ -161,6 +160,7 @@ function SideDrawer(props) {
             ))}
           </List>
         </Drawer>
+        <div className={classes.drawerHeader}/>
         {setScreenVisible(initial)}
       </div>
   );

@@ -1,45 +1,26 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 const FormDialog = props => {
-  const [open, setOpen] = React.useState(false);
-
-  function handleClickOpen() {
-    setOpen(true);
-  }
-
-  function handleClose() {
-    setOpen(false);
-  }
-
   return (
     <div style={{ marginLeft: 50 }}>
       <Dialog
         open={props.open}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogTitle id="form-dialog-title">{props.children}</DialogTitle>
+        onClose={props.onCancelClick}
+        aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">{props.dialogTitle}</DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Customer Name"
-            type="email"
-            fullWidth
-          />
+          {props.children}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={props.onCancelClick} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={props.onSaveClick} color="primary">
             Save
           </Button>
         </DialogActions>
