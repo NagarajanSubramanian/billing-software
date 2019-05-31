@@ -2,11 +2,14 @@ import React from "react";
 import FormDialog from "../../components/dialog/dialog";
 import Fab from "./../../components/fab/Fab";
 import TextField from "@material-ui/core/TextField";
+import Snackbar from './../../components/snackbar/snackbar'
 import "./CustomerMaster.css";
 
 const customerdetails = React.forwardRef((props, ref) => {
   const [open, setOpen] = React.useState(false);
-
+  const [snackopen, setSnackOpen] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [snackType, setSnackType] = React.useState('success')
   const nameRef = React.createRef();
   const addressRef = React.createRef();
   const phoneNoRef = React.createRef();
@@ -21,12 +24,22 @@ const customerdetails = React.forwardRef((props, ref) => {
   };
 
   const onKeyPress = event => {
-    if (event.target.id === "mobile") {
+    if (event.target.id === 'mobile') {
       if (phoneNoRef.current.value && phoneNoRef.current.value.length >= 10) {
         event.preventDefault();
       }
     }
   };
+
+  const onSaveClick = (data) => {
+    setSnackOpen(true);
+    setMessage('check condition');
+    setSnackType('information');
+  }
+
+  const handleClose = () => {
+    setSnackOpen(false);
+  }
 
   return (
     <React.Fragment>
@@ -34,8 +47,8 @@ const customerdetails = React.forwardRef((props, ref) => {
       <FormDialog
         open={open}
         onCancelClick={() => onCancelClick()}
-        onSaveClick={data => props.onSaveClick(data)}
-        dialogTitle="Add New Customer"
+        onSaveClick={data => onSaveClick(data)}
+        dialogTitle='Add New Customer'
       >
         <TextField
           autoFocus
@@ -74,6 +87,7 @@ const customerdetails = React.forwardRef((props, ref) => {
           fullWidth
         />
       </FormDialog>
+      <Snackbar open={snackopen} type={snackType} message={message} handleClose={() => handleClose()}/>
     </React.Fragment>
   );
 });

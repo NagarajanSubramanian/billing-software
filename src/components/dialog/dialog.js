@@ -10,7 +10,6 @@ const FormDialog = props => {
     <div style={{ marginLeft: 50 }}>
       <Dialog
         open={props.open}
-        onClose={props.onCancelClick}
         aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">{props.dialogTitle}</DialogTitle>
         <DialogContent>
