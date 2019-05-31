@@ -3,7 +3,6 @@ import FormDialog from "../../components/dialog/dialog";
 import Fab from "./../../components/fab/Fab";
 import TextField from "@material-ui/core/TextField";
 import Snackbar from './../../components/snackbar/snackbar'
-import "./CustomerMaster.css";
 
 const customerdetails = React.forwardRef((props, ref) => {
   const [open, setOpen] = React.useState(false);
