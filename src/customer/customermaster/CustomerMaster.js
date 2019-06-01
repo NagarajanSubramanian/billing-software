@@ -11,6 +11,7 @@ const customerdetails = React.forwardRef((props, ref) => {
   const [message, setMessage] = React.useState('');
   const [snackType, setSnackType] = React.useState('success');
   const [gridData, setGridData] = React.useState([]);
+  const idRef = React.createRef();
   const nameRef = React.createRef();
   const addressRef = React.createRef();
   const phoneNoRef = React.createRef();
@@ -33,8 +34,12 @@ const customerdetails = React.forwardRef((props, ref) => {
   };
 
   const onSaveClick = () => {
-    if(nameRef.current.value && addressRef.current.value && phoneNoRef.current.value && emailRef.current.value){
-      if(phoneNoRef.current.value.length < 10){
+    if(idRef.current.value && nameRef.current.value && addressRef.current.value && 
+      phoneNoRef.current.value && emailRef.current.value){
+      if(validateCustomerId(idRef.current.value)){
+        setMessage('Customer Id already exists.');
+        setSnackType('error');
+      } else if(phoneNoRef.current.value.length < 10){
         setMessage('Enter proper mobile no.');
         setSnackType('error');
       } else if(!validateEmail(emailRef.current.value)){
@@ -45,6 +50,7 @@ const customerdetails = React.forwardRef((props, ref) => {
         setSnackType('success');
         setOpen(false);
         gridData.push({
+          id: idRef.current.value,
           name: nameRef.current.value,
           address: addressRef.current.value,
           phoneNo: phoneNoRef.current.value,
@@ -63,6 +69,14 @@ const customerdetails = React.forwardRef((props, ref) => {
     setSnackOpen(false);
   }
 
+  const validateCustomerId = (id) => {
+    var existFlag = false;
+    gridData.forEach(function(data){
+      existFlag = data.id === id ? true : existFlag;
+    });
+    return existFlag;
+  }
+  
   const validateEmail = (email) => {
     var emailCheck = 
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -71,7 +85,7 @@ const customerdetails = React.forwardRef((props, ref) => {
 
   return (
     <React.Fragment>
-      <Table header={['Name', 'Address', 'Phone No', 'Email']} data={gridData}/>
+      <Table header={['Id', 'Name', 'Address', 'Phone No', 'Email']} data={gridData}/>
       <Fab id="customermaster-add" onClick={onAddClick} />
       <FormDialog
         open={open}
@@ -81,6 +95,15 @@ const customerdetails = React.forwardRef((props, ref) => {
       >
         <TextField
           autoFocus
+          margin="dense"
+          id="id"
+          label="Customer Id"
+          type="text"
+          inputRef={idRef}
+          fullWidth
+        />
+
+        <TextField
           margin="dense"
           id="name"
           label="Customer Name"
