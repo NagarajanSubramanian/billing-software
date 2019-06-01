@@ -34,16 +34,24 @@ const customerdetails = React.forwardRef((props, ref) => {
 
   const onSaveClick = () => {
     if(nameRef.current.value && addressRef.current.value && phoneNoRef.current.value && emailRef.current.value){
-      setMessage('Customer Details saved successfully.');
-      setSnackType('success');
-      setOpen(false);
-      gridData.push({
-        name: nameRef.current.value,
-        address: addressRef.current.value,
-        phoneNo: phoneNoRef.current.value,
-        email: emailRef.current.value
-      });
-      setGridData(gridData);
+      if(phoneNoRef.current.value.length < 10){
+        setMessage('Enter proper mobile no.');
+        setSnackType('error');
+      } else if(!validateEmail(emailRef.current.value)){
+        setMessage('Enter proper email address.');
+        setSnackType('error');
+      } else {
+        setMessage('Customer Details saved successfully.');
+        setSnackType('success');
+        setOpen(false);
+        gridData.push({
+          name: nameRef.current.value,
+          address: addressRef.current.value,
+          phoneNo: phoneNoRef.current.value,
+          email: emailRef.current.value
+        });
+        setGridData(gridData);
+      }
     } else {
       setMessage('Enter all fields.');
       setSnackType('error')
@@ -53,6 +61,12 @@ const customerdetails = React.forwardRef((props, ref) => {
 
   const handleClose = () => {
     setSnackOpen(false);
+  }
+
+  const validateEmail = (email) => {
+    var emailCheck = 
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailCheck.test(String(email).toLowerCase());
   }
 
   return (
