@@ -16,7 +16,7 @@ const TableData = (props) => {
     return (
         <Table>
             <TableHeader headerData = {props.header}/>
-            <TableContent content = {props.data}/>
+            <TableContent content = {props.data} handleMenuClick={(data) => props.handleMenuClick(data)}/>
         </Table>
     );
 };

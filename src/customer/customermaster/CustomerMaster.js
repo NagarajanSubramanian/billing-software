@@ -11,6 +11,8 @@ const customerdetails = React.forwardRef((props, ref) => {
   const [message, setMessage] = React.useState('');
   const [snackType, setSnackType] = React.useState('success');
   const [gridData, setGridData] = React.useState([]);
+  const [mode, setMode] = React.useState('');
+  const [gridSelectData, setSelectedGridData] = React.useState({});
   const idRef = React.createRef();
   const nameRef = React.createRef();
   const addressRef = React.createRef();
@@ -19,6 +21,7 @@ const customerdetails = React.forwardRef((props, ref) => {
 
   const onAddClick = () => {
     setOpen(true);
+    setMode('add')
   };
 
   const onCancelClick = () => {
@@ -46,16 +49,29 @@ const customerdetails = React.forwardRef((props, ref) => {
         setMessage('Enter proper email address.');
         setSnackType('error');
       } else {
-        setMessage('Customer Details saved successfully.');
         setSnackType('success');
         setOpen(false);
-        gridData.push({
-          id: idRef.current.value,
-          name: nameRef.current.value,
-          address: addressRef.current.value,
-          phoneNo: phoneNoRef.current.value,
-          email: emailRef.current.value
-        });
+        if(mode === 'add'){
+          setMessage('Customer Details added successfully.');
+          gridData.push({
+            id: idRef.current.value,
+            name: nameRef.current.value,
+            address: addressRef.current.value,
+            phoneNo: phoneNoRef.current.value,
+            email: emailRef.current.value,
+            contextMenu: ''
+          });
+        } else if(mode === 'edit') {
+          setMessage('Customer Details updated successfully.');
+          gridData.forEach(function(data){
+            if(data.id === idRef.current.value){
+              data.name = nameRef.current.value;
+              data.address = addressRef.current.value;
+              data.phoneNo = phoneNoRef.current.value;
+              data.email = emailRef.current.value;
+            }
+          }); 
+        }
         setGridData(gridData);
       }
     } else {
@@ -72,7 +88,7 @@ const customerdetails = React.forwardRef((props, ref) => {
   const validateCustomerId = (id) => {
     var existFlag = false;
     gridData.forEach(function(data){
-      existFlag = data.id === id ? true : existFlag;
+      existFlag = data.id === id && mode === 'add' ? true : existFlag;
     });
     return existFlag;
   }
@@ -83,9 +99,20 @@ const customerdetails = React.forwardRef((props, ref) => {
     return emailCheck.test(String(email).toLowerCase());
   }
 
+  const handleMenuClick = data  => {
+    setMode(data.menuId);
+    var gridDataValue = {};
+    gridData.filter(dataValue => dataValue.id === data.id).map(dataValue => {
+      gridDataValue = dataValue;
+    })
+    if(gridDataValue.id){
+      setSelectedGridData(gridDataValue)
+    }
+    setOpen(true);
+  }
   return (
     <React.Fragment>
-      <Table header={['Id', 'Name', 'Address', 'Phone No', 'Email']} data={gridData}/>
+      <Table header={['Id', 'Name', 'Address', 'Phone No', 'Email', '']} data={gridData} handleMenuClick={handleMenuClick}/>
       <Fab id="customermaster-add" onClick={onAddClick} />
       <FormDialog
         open={open}
@@ -95,7 +122,9 @@ const customerdetails = React.forwardRef((props, ref) => {
       >
         <TextField
           autoFocus
+          defaultValue={mode==='add' ? '' : gridSelectData.id}
           margin="dense"
+          disabled={mode==='edit' || mode==='view'}
           id="id"
           label="Customer Id"
           type="text"
@@ -105,7 +134,9 @@ const customerdetails = React.forwardRef((props, ref) => {
 
         <TextField
           margin="dense"
+          defaultValue={mode==='add' ? '' : gridSelectData.name}
           id="name"
+          disabled={mode==='view'}
           label="Customer Name"
           type="text"
           inputRef={nameRef}
@@ -113,7 +144,9 @@ const customerdetails = React.forwardRef((props, ref) => {
         />
         <TextField
           margin="normal"
+          defaultValue={mode==='add' ? '' : gridSelectData.address}
           id="address"
+          disabled={mode==='view'}
           multiline
           rowsMax="4"
           label="Customer Address"
@@ -123,6 +156,8 @@ const customerdetails = React.forwardRef((props, ref) => {
         />
         <TextField
           margin="dense"
+          defaultValue={mode==='add' ? '' : gridSelectData.phoneNo}
+          disabled={mode==='view'}
           id="mobile"
           label="Mobile No."
           inputRef={phoneNoRef}
@@ -132,6 +167,8 @@ const customerdetails = React.forwardRef((props, ref) => {
         />
         <TextField
           margin="dense"
+          defaultValue={mode==='add' ? '' : gridSelectData.email}
+          disabled={mode==='view'}
           id="email"
           label="Email"
           type="email"
