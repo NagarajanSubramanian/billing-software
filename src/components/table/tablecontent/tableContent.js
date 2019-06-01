@@ -5,7 +5,6 @@ import TableCell from '@material-ui/core/TableCell';
 import Typography from '@material-ui/core/Typography';
 
 const TableContentData = (props) => {
-    console.log(props.content)
     return (
         <TableBody>
             {
@@ -14,7 +13,7 @@ const TableContentData = (props) => {
                         {
                             Object.keys(value).map(keys => (
                                 <TableCell key={keys}>
-                                    <Typography variant='h6'>
+                                    <Typography variant='body2'>
                                         {value[keys]}
                                     </Typography>
                                 </TableCell>
