@@ -4,6 +4,16 @@ import Fab from "./../../components/fab/Fab";
 import TextField from "@material-ui/core/TextField";
 import Snackbar from './../../components/snackbar/snackbar';
 import Table from './../../components/table/table';
+import SearchInput from './../../components/searchinput/searchInput';
+
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = {
+  root: {
+    width: '60%',
+    margin: 'auto'
+  }
+};
 
 const customerdetails = React.forwardRef((props, ref) => {
   const [open, setOpen] = React.useState(false);
@@ -18,6 +28,8 @@ const customerdetails = React.forwardRef((props, ref) => {
   const addressRef = React.createRef();
   const phoneNoRef = React.createRef();
   const emailRef = React.createRef();
+
+  const { classes } = props;
 
   const onAddClick = () => {
     setOpen(true);
@@ -112,16 +124,19 @@ const customerdetails = React.forwardRef((props, ref) => {
   }
   return (
     <React.Fragment>
-      <Table header={['Id', 'Name', 'Address', 'Phone No', 'Email', '']} data={gridData} handleMenuClick={handleMenuClick}/>
+      <SearchInput placeholder='Search Customer: customer id, phone no, email'/>
+      <Table className={classes.root} header={['Id', 'Name', 'Address', 'Phone No', 'Email', '']} 
+        data={gridData} handleMenuClick={handleMenuClick} width={['10%', '15%', '32%', '15%', '20','8%']}/>
       <Fab id="customermaster-add" onClick={onAddClick} />
       <FormDialog
+      saveButton={mode!=='view'}
         open={open}
         onCancelClick={() => onCancelClick()}
         onSaveClick={data => onSaveClick(data)}
         dialogTitle='Add New Customer'
       >
         <TextField
-          autoFocus
+          autoFocus={mode==='add'}
           defaultValue={mode==='add' ? '' : gridSelectData.id}
           margin="dense"
           disabled={mode==='edit' || mode==='view'}
@@ -134,6 +149,7 @@ const customerdetails = React.forwardRef((props, ref) => {
 
         <TextField
           margin="dense"
+          autoFocus={mode==='edit'}
           defaultValue={mode==='add' ? '' : gridSelectData.name}
           id="name"
           disabled={mode==='view'}
@@ -181,4 +197,4 @@ const customerdetails = React.forwardRef((props, ref) => {
   );
 });
 
-export default customerdetails;
+export default withStyles(styles)(customerdetails);
