@@ -10,6 +10,14 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
+import { withStyles } from '@material-ui/core/styles';
+
+const style = {
+    root:{
+        maxWidth:100
+    }
+}
+
 const TableContentData = (props) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [open, setOpen] = useState(false);
@@ -30,15 +38,16 @@ const TableContentData = (props) => {
         setOpen(false);
         props.handleMenuClick({id: id, menuId: event.target.getAttribute('data')})
     }
+    const { classes } = props;
     return (
         <TableBody>
             {
                 props.content.map((value, index) => (
                     <TableRow hover key={index}>
-                        {
+                        { 
                             Object.keys(value).map(keys => {
                                 if(keys === 'contextMenu'){
-                                    return <TableCell key={keys}>
+                                    return <TableCell key={keys} className={classes.root}>
                                         <IconButton
                                             aria-label="More"
                                             aria-owns={false ? 'long-menu' : undefined}
@@ -60,8 +69,11 @@ const TableContentData = (props) => {
                                         </Menu>
                                     </TableCell>
                                 } else {
-                                    return <TableCell key={keys}>
-                                        <Typography variant='body2'>
+                                    return <TableCell key={keys} className={classes.root} >
+                                        <Typography variant='body2'  className={classes.root} style={{                                   
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis'
+                            }}>
                                              {value[keys]}
                                          </Typography>
                                      </TableCell>
@@ -76,4 +88,4 @@ const TableContentData = (props) => {
     );
 };
 
-export default TableContentData;
+export default withStyles(style)(TableContentData);

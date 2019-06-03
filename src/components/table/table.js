@@ -3,19 +3,23 @@ import {withStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableHeader from './tableheader/tableHeader';
 import TableContent from './tablecontent/tableContent';
+import clsx from 'clsx';
 
 
 const styles = {
     table: {
-        minWidth: 650
+        border: '1px solid lightgrey',
+        marginTop: '8px !important',
+        borderRadius: 10
     }
 };
 
 
 const TableData = (props) => {
+    const {classes} = props;
     return (
-        <Table>
-            <TableHeader headerData = {props.header}/>
+        <Table className={clsx(props.className, classes.table)}>
+            <TableHeader headerData = {props.header} width={props.width}/>
             <TableContent content = {props.data} handleMenuClick={(data) => props.handleMenuClick(data)}/>
         </Table>
     );
