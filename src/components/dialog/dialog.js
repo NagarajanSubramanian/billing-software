@@ -6,6 +6,14 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 const FormDialog = props => {
+  const checkSaveButton = () => {
+    if(props.saveButton){
+      return <Button onClick={props.onSaveClick} color="primary">
+                Save
+              </Button>
+    }
+  }
+
   return (
     <div style={{ marginLeft: 50 }}>
       <Dialog
@@ -16,12 +24,11 @@ const FormDialog = props => {
           {props.children}
         </DialogContent>
         <DialogActions>
-          <Button onClick={props.onCancelClick} color="primary">
+          <Button autoFocus={!props.saveButton} onClick={props.onCancelClick} color="primary">
             Cancel
           </Button>
-          <Button onClick={props.onSaveClick} color="primary">
-            Save
-          </Button>
+          {checkSaveButton()}
+          
         </DialogActions>
       </Dialog>
     </div>

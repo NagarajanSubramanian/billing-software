@@ -10,8 +10,13 @@ const TableHeaderData = (props) => {
         <TableRow>
             {
                 props.headerData.map((data, index) => (
-                    <TableCell key={index}>
-                        <Typography variant="h6">
+                    <TableCell key={index} style={{
+                        maxWidth: 100
+                    }}>
+                        <Typography variant="h6" style={{                                   
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                        }}>
                             {data}
                         </Typography>
                     </TableCell>
