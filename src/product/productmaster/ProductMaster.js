@@ -78,6 +78,7 @@ const ProductMaster = props => {
         onCancelClick={onCancelClick}
         onSaveClick={onSaveClick}
         dialogTitle="Add New Product"
+        saveButton
       >
         <TextField
           label="Product Code"
