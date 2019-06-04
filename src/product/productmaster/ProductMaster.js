@@ -3,8 +3,18 @@ import Fab from "./../../components/fab/Fab";
 import Dialog from "./../../components/dialog/dialog";
 import TextField from "@material-ui/core/TextField";
 import SnackBar from "./../../components/snackbar/snackbar";
+import Table from "./../../components/table/table";
+import { withStyles } from "@material-ui/styles";
+import SearchInput from "./../../components/searchinput/searchInput";
 
-const ProductMaster = () => {
+const styles = {
+  root: {
+    width: "60%",
+    margin: "auto"
+  }
+};
+
+const ProductMaster = props => {
   const [open, setOpen] = React.useState(false);
   const [openSnack, setOpenSnack] = React.useState(false);
   const [messageContent, setMessageContent] = React.useState("");
@@ -15,6 +25,18 @@ const ProductMaster = () => {
   const brandref = React.createRef();
   const crackertyperef = React.createRef();
   const amountref = React.createRef();
+
+  const { classes } = props;
+
+  const headerData = [
+    "Product Code",
+    "Product Name",
+    "Brand",
+    "Cracker Type",
+    "Amount"
+  ];
+
+  const data = [];
 
   const onAddClick = () => {
     setOpen(true);
@@ -48,6 +70,8 @@ const ProductMaster = () => {
 
   return (
     <div>
+      <SearchInput placeholder="Search Product Name, Brand, Cracker Type" />
+      <Table header={headerData} data={data} className={classes.root} />
       <Fab id="productmaster-add" onClick={onAddClick} />
       <Dialog
         open={open}
@@ -94,4 +118,4 @@ const ProductMaster = () => {
   );
 };
 
-export default ProductMaster;
+export default withStyles(styles)(ProductMaster);
