@@ -6,6 +6,7 @@ import SnackBar from "./../../components/snackbar/snackbar";
 import Table from "./../../components/table/table";
 import { withStyles } from "@material-ui/styles";
 import SearchInput from "./../../components/searchinput/searchInput";
+import axios from "axios";
 
 const styles = {
   root: {
@@ -57,6 +58,18 @@ const ProductMaster = props => {
       brandref.current.value &&
       amountref.current.value
     ) {
+      const newTodo = {
+        product_code: productcoderef.current.value,
+        product_name: productnameref.current.value,
+        brand: brandref.current.value,
+        cracker_type: "ground",
+        amount: amountref.current.value
+      };
+
+      axios
+        .post("http://localhost:4000/products/add", newTodo)
+        .then(res => console.log("res.data" + "Data added Success"));
+
       setMessageContent("Data Added Successfully");
       setType("success");
       setOpen(false);
