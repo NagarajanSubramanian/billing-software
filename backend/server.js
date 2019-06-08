@@ -8,10 +8,10 @@ const PORT = 4000;
 
 let Product_data = require("./productdetail.model");
 
-app.use(cors);
+app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect("mongodb://127.0.0.1:27017/product_details", {
+mongoose.connect("mongodb://127.0.0.1:27017/products", {
   useNewUrlParser: true
 });
 
@@ -39,6 +39,7 @@ productroutes.route("/:id").get(function(req, res) {
 });
 
 productroutes.route("/add").post(function(req, res) {
+  console.log("Data will get added");
   let product = new Product_data(req.body);
   product
     .save()
@@ -50,7 +51,7 @@ productroutes.route("/add").post(function(req, res) {
     });
 });
 
-productroutes.route("/uppdate/:id").post(function(req, res) {
+productroutes.route("/update/:id").post(function(req, res) {
   Product_data.findById(req.params.id, function(err, product) {
     if (!product) {
       res.status(404).send("Data not found");
@@ -73,7 +74,7 @@ productroutes.route("/uppdate/:id").post(function(req, res) {
   });
 });
 
-app.use("/product_details", productroutes);
+app.use("/products", productroutes);
 
 app.listen(PORT, function() {
   console.log(`server is running on the port ${PORT}`);
