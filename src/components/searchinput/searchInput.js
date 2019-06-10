@@ -28,11 +28,10 @@ const theme = createMuiTheme({
 });
 
 const SearchInput = (props) => {
-    console.log(theme)
     return (
         <ThemeProvider theme={theme}>
             <TextField placeholder={props.placeholder} variant='outlined' fullWidth 
-            InputProps={{
+              InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
                     <SearchIcon />

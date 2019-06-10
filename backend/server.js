@@ -7,15 +7,18 @@ const productroutes = express.Router();
 const PORT = 4000;
 
 let Product_data = require("./productdetail.model");
+let Customer_data = require("./customerdetail.model");
 
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect("mongodb://127.0.0.1:27017/products", {
+mongoose.connect("mongodb://localhost:27017/billingdetails", {
   useNewUrlParser: true
 });
 
 const connection = mongoose.connection;
+
+console.log(connection)
 
 connection.once("open", function() {
   console.log("MongoDB database connection established successfullt");
@@ -39,7 +42,6 @@ productroutes.route("/:id").get(function(req, res) {
 });
 
 productroutes.route("/add").post(function(req, res) {
-  console.log("Data will get added");
   let product = new Product_data(req.body);
   product
     .save()
@@ -49,6 +51,19 @@ productroutes.route("/add").post(function(req, res) {
     .catch(err => {
       res.status(400).send("Adding a new data failed");
     });
+});
+
+productroutes.route("/addCustomerData").post(function(req, res) {
+  let customerData = new Customer_data(req.body);
+  customerData.save().then(data => {
+    Customer_data.find(function(err, customerDatas) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.json(customerDatas);
+      }
+    });
+  })
 });
 
 productroutes.route("/update/:id").post(function(req, res) {

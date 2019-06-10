@@ -2,9 +2,13 @@ import React from "react";
 import FormDialog from "../../components/dialog/dialog";
 import Fab from "./../../components/fab/Fab";
 import TextField from "@material-ui/core/TextField";
+import { connect } from 'react-redux';
+import axios from "axios";
+
 import Snackbar from './../../components/snackbar/snackbar';
 import Table from './../../components/table/table';
 import SearchInput from './../../components/searchinput/searchInput';
+import { loadCustomer } from './../../redux/action/customerDetailsAction';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -61,9 +65,34 @@ const customerdetails = React.forwardRef((props, ref) => {
         setMessage('Enter proper email address.');
         setSnackType('error');
       } else {
+
         setSnackType('success');
+
+        const newTodo = {
+          customer_id: idRef.current.value,
+          name: nameRef.current.value,
+          address: addressRef.current.value,
+          phone: phoneNoRef.current.value,
+          email: emailRef.current.value
+        };
+
         setOpen(false);
         if(mode === 'add'){
+          axios
+        .post("http://localhost:4000/products/addCustomerData", newTodo)
+        .then(res => {
+          const customerData = res.data.map(data => {
+            return {
+              id: data.customer_id,
+              name: data.name,
+              address: data.address,
+              phoneNo: data.phone,
+              email: data.email,
+              contextMenu: ''
+            }
+          });
+          props.loadCustomer(customerData)
+        });
           setMessage('Customer Details added successfully.');
           gridData.push({
             id: idRef.current.value,
@@ -122,11 +151,13 @@ const customerdetails = React.forwardRef((props, ref) => {
     }
     setOpen(true);
   }
+
+  const {customerData} = props;
   return (
     <React.Fragment>
       <SearchInput placeholder='Search Customer: customer id, phone no, email'/>
       <Table className={classes.root} header={['Id', 'Name', 'Address', 'Phone No', 'Email', '']} 
-        data={gridData} handleMenuClick={handleMenuClick} width={['10%', '15%', '32%', '15%', '20','8%']}/>
+        data={customerData} handleMenuClick={handleMenuClick} width={['10%', '15%', '32%', '15%', '20','8%']}/>
       <Fab id="customermaster-add" onClick={onAddClick} />
       <FormDialog
       saveButton={mode!=='view'}
@@ -197,4 +228,17 @@ const customerdetails = React.forwardRef((props, ref) => {
   );
 });
 
-export default withStyles(styles)(customerdetails);
+const mapStateToProps = (state) => {
+  return {
+    customerData: state.loadCustomers,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return ({
+    loadCustomer: customerData => dispatch(loadCustomer(customerData)), 
+  });
+}
+
+const CustomerMasterComponent = withStyles(styles)(customerdetails);
+export default connect(mapStateToProps, mapDispatchToProps)(CustomerMasterComponent);
