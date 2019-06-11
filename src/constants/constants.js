@@ -1,3 +1,3 @@
-
-export const ADD_CUSTOMER = 'ADD_CUSTOMER';
-export const LOAD_CUSTOMER = 'LOAD_CUSTOMER';
+export const ADD_CUSTOMER = "ADD_CUSTOMER";
+export const LOAD_CUSTOMER = "LOAD_CUSTOMER";
+export const LOAD_PRODUCT = "LOAD_PRODUCT";

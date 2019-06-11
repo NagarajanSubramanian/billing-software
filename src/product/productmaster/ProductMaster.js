@@ -7,6 +7,8 @@ import Table from "./../../components/table/table";
 import { withStyles } from "@material-ui/styles";
 import SearchInput from "./../../components/searchinput/searchInput";
 import axios from "axios";
+import { connect } from "react-redux";
+import { loadProductData } from "./../../redux/action/customerDetailsAction";
 
 const styles = {
   root: {
@@ -27,7 +29,7 @@ const ProductMaster = props => {
   const crackertyperef = React.createRef();
   const amountref = React.createRef();
 
-  const { classes } = props;
+  const { classes, productData } = props;
 
   const headerData = [
     "Product Code",
@@ -66,9 +68,19 @@ const ProductMaster = props => {
         amount: amountref.current.value
       };
 
-      axios
-        .post("http://localhost:4000/products/add", newTodo)
-        .then(res => console.log("res.data" + "Data added Success"));
+      axios.post("http://localhost:4000/products/add", newTodo).then(res => {
+        const productData = res.data.map(data => {
+          return {
+            product_code: data.product_code,
+            product_name: data.product_name,
+            brand: data.brand,
+            cracker_type: data.cracker_type,
+            amount: data.amount
+          };
+        });
+
+        return props.loadProductData(productData);
+      });
 
       setMessageContent("Data Added Successfully");
       setType("success");
@@ -132,4 +144,21 @@ const ProductMaster = props => {
   );
 };
 
-export default withStyles(styles)(ProductMaster);
+const mapDispatchToProps = dispatch => {
+  return {
+    productDetails: productData => dispatch(loadProductData(productData))
+  };
+};
+
+const mapStateToProps = state => {
+  return {
+    productData: state.productData
+  };
+};
+
+const ProductMasterData = withStyles(styles)(ProductMaster);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProductMasterData);

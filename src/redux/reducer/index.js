@@ -1,8 +1,10 @@
-import { combineReducers } from 'redux';
-import { loadCustomers } from './customerDetailReducer';
+import { combineReducers } from "redux";
+import { loadCustomers } from "./customerDetailReducer";
+import { loadProduct } from "./productDetailReducer";
 
 const reducer = combineReducers({
-    loadCustomers
-  });
+  loadCustomers,
+  loadProduct
+});
 
-  export default reducer;
+export default reducer;
