@@ -66,6 +66,29 @@ productroutes.route("/addCustomerData").post(function(req, res) {
   })
 });
 
+productroutes.route("/loadInitialData").post(function(req, res) {
+    var initailData= {};
+    Customer_data.find(function(err, customerDatas) {
+      if (err) {
+        initailData['error'] = 'error';
+      } else {
+        initailData.customerData = customerDatas;
+      }
+    }).then(function(){
+      return Product_data.find(function(err, product) {
+        if (err) {
+          initailData['error'] = 'error';
+        } else {
+          initailData.productData = product;
+        }
+      });
+    }).then(function(){
+      res.json(initailData);
+    }).catch(function(){
+      res.json(initailData);
+    });
+});
+
 productroutes.route("/update/:id").post(function(req, res) {
   Product_data.findById(req.params.id, function(err, product) {
     if (!product) {

@@ -142,9 +142,8 @@ const customerdetails = React.forwardRef((props, ref) => {
 
   const handleMenuClick = data  => {
     setMode(data.menuId);
-    var gridDataValue = {};
-    gridData.filter(dataValue => dataValue.id === data.id).map(dataValue => {
-      gridDataValue = dataValue;
+  var gridDataValue = props.customerData.filter(dataValue => dataValue.id === data.id).map(dataValue => {
+      return dataValue;
     })
     if(gridDataValue.id){
       setSelectedGridData(gridDataValue)

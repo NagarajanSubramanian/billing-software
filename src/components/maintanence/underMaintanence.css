@@ -1,0 +1,17 @@
+.maintanenceClass{
+    background-image: url('../../images/maintenance.jpg');
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-size: cover;
+    text-align: center;
+  }
+
+  .maintanance-label{
+    position: absolute;
+    top: 30%;
+    text-align: center;
+    left: 20%;
+    color: blue;
+    font-size: xx-large;
+  }
