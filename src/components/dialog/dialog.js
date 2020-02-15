@@ -7,28 +7,29 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 
 const FormDialog = props => {
   const checkSaveButton = () => {
-    if(props.saveButton){
-      return <Button onClick={props.onSaveClick} color="primary">
-                Save
-              </Button>
+    if (props.saveButton) {
+      return (
+        <Button onClick={props.onSaveClick} color="primary">
+          Save
+        </Button>
+      );
     }
-  }
+  };
 
   return (
     <div style={{ marginLeft: 50 }}>
-      <Dialog
-        open={props.open}
-        aria-labelledby="form-dialog-title">
+      <Dialog open={props.open}>
         <DialogTitle id="form-dialog-title">{props.dialogTitle}</DialogTitle>
-        <DialogContent>
-          {props.children}
-        </DialogContent>
+        <DialogContent>{props.children}</DialogContent>
         <DialogActions>
-          <Button autoFocus={!props.saveButton} onClick={props.onCancelClick} color="primary">
+          <Button
+            autoFocus={!props.saveButton}
+            onClick={props.onCancelClick}
+            color="primary"
+          >
             Cancel
           </Button>
           {checkSaveButton()}
-          
         </DialogActions>
       </Dialog>
     </div>

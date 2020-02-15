@@ -5,7 +5,18 @@ import "./Fab.css";
 
 const FabButton = props => {
   return (
-    <Fab color="primary" variant="round" id={props.id} onClick={props.onClick}>
+    <Fab
+      style={{
+        position: "absolute",
+        right: "50px",
+        bottom: "40px"
+      }}
+      className="newapplication"
+      color="primary"
+      variant="round"
+      id={props.id}
+      onClick={props.onClick}
+    >
       <AddIcon />
     </Fab>
   );
