@@ -3,6 +3,25 @@ import clsx from "clsx";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import Icon from "./../icons/icons";
+import { makeStyles } from "@material-ui/core/styles";
+
+const styles = makeStyles(theme => ({
+  listItemText: {
+    marginBottom: 0
+  },
+  selected: {
+    color: "blue"
+  },
+  unselected: {
+    color: "black"
+  },
+  listIcon: {
+    color: "red",
+    minWidth: 30
+  }
+}));
 
 function checkSubItem(value, classesData, initial, props) {
   const marginLeft = parseInt(props.marginLeft);
@@ -25,7 +44,7 @@ function checkSubItem(value, classesData, initial, props) {
 
 export default function ListData(props) {
   const marginLeft = parseInt(props.marginLeft);
-  var classesData = props.classesData;
+  var classesData = styles();
   return (
     <React.Fragment>
       <List id={props.id}>
@@ -45,8 +64,13 @@ export default function ListData(props) {
               )}
               onClick={props.clickSideMenuHandler}
             >
-              <ListItemText
+              <ListItemIcon
+                className={classesData.listIcon}
                 style={{ paddingLeft: marginLeft + "px" }}
+              >
+                <Icon icon={text.icon} />
+              </ListItemIcon>
+              <ListItemText
                 className={classesData.listItemText}
                 primary={text.name}
               />

@@ -3,23 +3,18 @@ import clsx from "clsx";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
-import AppsIcon from "@material-ui/icons/Apps";
-import PeopleIcon from "@material-ui/icons/People";
-import HomeIcon from "@material-ui/icons/Home";
 import MenuIcon from "@material-ui/icons/Menu";
 import Backdrop from "@material-ui/core/Backdrop";
 import { makeStyles } from "@material-ui/core/styles";
 import ProductDetails from "../../product/productmaster/ProductMaster";
 import CustomerDetails from "../../customer/customermaster/CustomerMaster";
 import Category from "./../../category/category";
+import Supplier from "./../../supplier/supplierData";
 import ListData from "./../list/list";
+import NumericField from "./../numericinput/numericinput";
 
 const drawerWidth = 240;
 const backgroundColor = "black";
@@ -30,9 +25,11 @@ const values = [
     name: "View",
     subItemId: "view-id",
     parentId: "view",
+    icon: "apps",
     close: false,
     subItem: [
       { parentId: "view", id: "catagory", name: "Catagory", icon: "home" },
+      { parentId: "view", id: "supplier", name: "Supplier", icon: "home" },
       {
         parentId: "view",
         id: "customerdetails",
@@ -76,19 +73,6 @@ const useStyles = makeStyles(theme => ({
   },
   toolbarHeight: {
     minHeight: "48px"
-  },
-  listItemText: {
-    marginBottom: 0
-  },
-  selected: {
-    color: "blue"
-  },
-  unselected: {
-    color: "black"
-  },
-  listIcon: {
-    color: "red",
-    minWidth: 30
   },
   drawerPaper: {
     width: drawerWidth
@@ -157,7 +141,10 @@ function SideDrawer(props) {
     } else if (targetId === "productdetails") {
       setInitial("productdetails");
       changeAppName("Product Details");
-    } else {
+    } else if (targetId === "supplier") {
+      setInitial("supplier");
+      changeAppName("Supplier");
+    } else if (targetId === "home") {
       setInitial("home");
       changeAppName("Home");
     }
@@ -167,16 +154,6 @@ function SideDrawer(props) {
     changeAppName("Home");
     handleDrawerClose();
   }
-  const checkDisplayingDrawerIcon = icon => {
-    switch (icon) {
-      case "home":
-        return <HomeIcon />;
-      case "people":
-        return <PeopleIcon />;
-      default:
-        return <AppsIcon />;
-    }
-  };
 
   const setScreenVisible = id => {
     if (id === "catagory") {
@@ -185,6 +162,8 @@ function SideDrawer(props) {
       return <CustomerDetails />;
     } else if (id === "productdetails") {
       return <ProductDetails />;
+    } else if (id === "supplier") {
+      return <Supplier />;
     } else {
       return <React.Fragment />;
     }

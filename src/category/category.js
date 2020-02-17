@@ -6,6 +6,7 @@ import Snackbar from "./../components/snackbar/snackbar";
 import SearchInput from "./../components/searchinput/searchInput";
 import Table from "./../components/table/table";
 import { combineReducers } from "redux";
+import NumericInput from "./../components/numericinput/numericinput";
 
 export default function Category(props) {
   const [open, setOpen] = React.useState(false);
@@ -27,7 +28,7 @@ export default function Category(props) {
   }
 
   function onSaveClick(data) {
-    console.log(catagoryNameRef.current.value);
+    console.log(shortRef.current.value);
     if (
       catagoryNameRef.current.value &&
       shortRef.current.value &&
@@ -96,16 +97,14 @@ export default function Category(props) {
           fullWidth
         />
 
-        <TextField
-          margin="dense"
+        <NumericInput
           autoFocus={mode === "edit"}
           defaultValue={mode === "add" ? "" : gridSelectData.name}
           id="catagory-short"
           disabled={mode === "view"}
-          label="Short"
-          type="text"
-          inputRef={shortRef}
+          ref={shortRef}
           fullWidth
+          label="Short"
         />
         <TextField
           margin="normal"
@@ -119,26 +118,25 @@ export default function Category(props) {
           type="text"
           fullWidth
         />
-        <TextField
-          margin="dense"
-          defaultValue={mode === "add" ? "" : gridSelectData.phoneNo}
-          disabled={mode === "view"}
+
+        <NumericInput
+          defaultValue={mode === "add" ? "" : gridSelectData.name}
           id="catagory-cst"
-          label="CST"
-          inputRef={cstRef}
-          type="text"
-          onKeyPress={onKeyPress}
-          fullWidth
-        />
-        <TextField
-          margin="dense"
-          defaultValue={mode === "add" ? "" : gridSelectData.email}
           disabled={mode === "view"}
-          id="catagory-vat"
-          label="VAT"
-          type="text"
-          inputRef={vatRef}
+          ref={cstRef}
           fullWidth
+          label="CST"
+          precision={2}
+        />
+
+        <NumericInput
+          defaultValue={mode === "add" ? "" : gridSelectData.name}
+          id="catagory-vat"
+          disabled={mode === "view"}
+          ref={vatRef}
+          fullWidth
+          label="VAT"
+          precision={2}
         />
       </FormDialog>
       <Snackbar
