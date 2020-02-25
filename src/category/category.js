@@ -5,11 +5,25 @@ import TextField from "@material-ui/core/TextField";
 import Snackbar from "./../components/snackbar/snackbar";
 import SearchInput from "./../components/searchinput/searchInput";
 import Table from "./../components/table/table";
-import { combineReducers } from "redux";
+import { connect } from "react-redux";
 import NumericInput from "./../components/numericinput/numericinput";
+import ConfimationDialog from "./../components/confimationdialog/confirmationDialog";
 
-export default function Category(props) {
+const Category = props => {
   const [open, setOpen] = React.useState(false);
+  const [confimationTitle, setConfimationTitle] = React.useState(
+    "Confirmation"
+  );
+  const [confirmationContent, setConfimationContent] = React.useState(
+    "Do you want to add record?"
+  );
+  const [okLabel, setOkLabel] = React.useState("YES");
+  const [cancelLabel, setCancelLabel] = React.useState("NO");
+  const [okLabelFocus, setOKLabelFocus] = React.useState(true);
+  const [cancelLabelFocus, setCancelLabelFocus] = React.useState(false);
+  const [confirmationOpen, setConfirmationOpen] = React.useState(false);
+  const [okButtonColor, setOkButtonColor] = React.useState("primary");
+  const [cancelButtonColor, setCancelButtonColor] = React.useState("primary");
   const [snackopen, setSnackOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [snackType, setSnackType] = React.useState("success");
@@ -56,6 +70,7 @@ export default function Category(props) {
     setMode("add");
   }
   function handleMenuClick() {}
+  console.log(props.catagoryData);
   return (
     <div>
       <SearchInput placeholder="Search Catagory Name, Commodity code" />
@@ -139,6 +154,18 @@ export default function Category(props) {
           precision={2}
         />
       </FormDialog>
+      <ConfimationDialog
+        id="catagory-add-confiramtion"
+        dialogTitle={confimationTitle}
+        dialogContent={confirmationContent}
+        okLabel={okLabel}
+        cancelLabel={cancelLabel}
+        okButtonColor={okButtonColor}
+        cancelButtonColor={cancelButtonColor}
+        okLabelFocus={okLabelFocus}
+        cancelLabelFocus={cancelLabelFocus}
+        open={confirmationOpen}
+      />
       <Snackbar
         open={snackopen}
         type={snackType}
@@ -147,4 +174,12 @@ export default function Category(props) {
       />
     </div>
   );
-}
+};
+
+const mapStateToProps = state => {
+  return {
+    catagoryData: state.catagoryData
+  };
+};
+
+export default connect(mapStateToProps)(Category);

@@ -1,3 +1,6 @@
 export const ADD_CUSTOMER = "ADD_CUSTOMER";
 export const LOAD_CUSTOMER = "LOAD_CUSTOMER";
+
+export const LOAD_CATAGORY = "LOAD_CATAGORY";
 export const LOAD_PRODUCT = "LOAD_PRODUCT";
+export const LOAD_SUPPLIER = "LOAD_SUPPLIER";

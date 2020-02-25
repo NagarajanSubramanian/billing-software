@@ -18,6 +18,7 @@ const NumericField = React.forwardRef((props, ref) => {
         var valueData = parseFloat(
           parseFloat(getValue).toFixed(props.precision)
         ).toLocaleString("en-IN");
+        //valueData = valueData.indexOf(".") < 0 ? valueData + ".0" : valueData;
         if (getValue.indexOf(".") >= 0) {
           valueData = (getValue + "").split(".")[1]
             ? valueData
@@ -53,10 +54,13 @@ const NumericField = React.forwardRef((props, ref) => {
         id={props.id}
         disabled={props.disabled}
         fullWidth={props.fullWidth}
+        style={props.style}
         label={props.label}
         defaultValue={props.defaultValue ? props.defaultValue : ""}
         onChange={event => handleInputChange(event, props)}
-        inputProps={{ style: { textAlign: "right", padding: "6px 6px" } }}
+        inputProps={{
+          style: { textAlign: "right", padding: "6px 6px" }
+        }}
       />
     </React.Fragment>
   );

@@ -4,47 +4,33 @@ import SideDrawer from "./components/sidedrawer/sidedrawer";
 import Spinner from "./../src/components/spinner/spinner";
 import Maintanance from "./../src/components/maintanence/underMaintanence";
 
-import { loadCustomer } from "./../src/redux/action/customerDetailsAction";
+import { loadCatagory } from "./../src/redux/action/crackerAction";
 
 import { connect } from "react-redux";
-import axios from "axios";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      screenFlag: "completed"
+      screenFlag: "loading"
     };
   }
 
   componentDidMount() {
     var self = this;
-    /** 
-    axios
-      .post("http://localhost:4000/products/loadInitialData")
-      .then(function(initialData) {
-        if (!initialData.data.error) {
+
+    fetch("http://localhost:8081/getAll")
+      .then(res => res.json())
+      .then(
+        result => {
           self.setState({ screenFlag: "completed" });
-          const customerData = initialData.data.customerData.map(data => {
-            return {
-              id: data.customer_id,
-              name: data.name,
-              address: data.address,
-              phoneNo: data.phone,
-              email: data.email,
-              contextMenu: ""
-            };
-          });
-          self.props.loadCustomer(customerData);
-        } else {
-          self.setState({ screenFlag: "completed" });
+          self.props.loadCatagory(result.catagory);
+        },
+        error => {
+          self.setState({ screenFlag: "error" });
         }
-      })
-      .catch(function(err) {
-        self.setState({ screenFlag: "completed" });
-      });
-      */
+      );
   }
 
   checkInitialScreen() {
@@ -67,7 +53,7 @@ class App extends React.Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadCustomer: customerData => dispatch(loadCustomer(customerData))
+    loadCatagory: catagoryData => dispatch(loadCatagory(catagoryData))
   };
 };
 
