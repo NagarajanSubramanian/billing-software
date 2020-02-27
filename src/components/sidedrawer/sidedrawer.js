@@ -131,7 +131,6 @@ function SideDrawer(props) {
   const clickSideMenuHandler = event => {
     checkOpenCloseList(event);
     const targetId = event.currentTarget.id;
-    console.log(event);
     if (targetId === "catagory") {
       setInitial("catagory");
       changeAppName("Catagory");

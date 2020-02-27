@@ -27,6 +27,7 @@ const Category = props => {
   const [snackopen, setSnackOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [snackType, setSnackType] = React.useState("success");
+  const [currentData, setCurrentData] = React.useState({});
   const [gridData, setGridData] = React.useState([]);
   const [mode, setMode] = React.useState("");
   const [gridSelectData, setSelectedGridData] = React.useState({});
@@ -42,7 +43,6 @@ const Category = props => {
   }
 
   function onSaveClick(data) {
-    console.log(shortRef.current.value);
     if (
       catagoryNameRef.current.value &&
       shortRef.current.value &&
@@ -50,10 +50,14 @@ const Category = props => {
       cstRef.current.value &&
       vatRef.current.value
     ) {
-      setOpen(false);
-      setSnackOpen(true);
-      setSnackType("success");
-      setMessage("Saved successfully.");
+      setCurrentData({
+        catagoryName: catagoryNameRef.current.value,
+        catagoryShort: shortRef.current.value,
+        catagoryCommodityCode: commodityRef.current.value,
+        catagoryCst: cstRef.current.value,
+        catagoryVat: vatRef.current.value
+      });
+      setConfirmationOpen(true);
     } else {
       setSnackOpen(true);
       setSnackType("error");
@@ -69,24 +73,53 @@ const Category = props => {
     setOpen(true);
     setMode("add");
   }
-  function handleMenuClick() {}
-  console.log(props.catagoryData);
+  function handleConfirmationOk() {
+    currentData["mode"] = "add";
+    fetch("http://localhost:8081/insertCatagory", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(currentData)
+    })
+      .then(res => res.text())
+      .then(
+        data => {
+          setSnackOpen(true);
+          setSnackType("success");
+          setMessage("Saved successfully.");
+        },
+        error => {}
+      );
+  }
+  function handleConfirmationClose() {
+    setConfirmationOpen(false);
+  }
+  const handleMenuClick = data => {
+    console.log(data);
+  };
+
+  var headerProperty = [
+    { filed: "no", visible: true, headerName: "No" },
+    { field: "catagoryId", visible: false, headerName: "Catagory ID" },
+    { field: "catagoryName", visible: true, headerName: "Catagory Name" },
+    { filed: "catagoryShort", visible: true, headerName: "Short" },
+    {
+      filed: "catagoryCommodityCode",
+      visible: true,
+      headerName: "Commodity Code"
+    },
+    { filed: "catagoryCst", visible: true, headerName: "CST" },
+    { filed: "catagoryVat", visible: true, headerName: "VAT" }
+  ];
   return (
     <div>
       <SearchInput placeholder="Search Catagory Name, Commodity code" />
       <Table
-        header={[
-          "No",
-          "Catagory Name",
-          "Short",
-          "Commodity-code",
-          "CST",
-          "VST",
-          ""
-        ]}
-        data={[]}
-        handleMenuClick={handleMenuClick}
-        width={["8%", "27%", "15%", "15%", "15%", "15%", "5%"]}
+        header={headerProperty}
+        fieldId="catagoryId"
+        data={props.catagoryData}
+        contextMenu={true}
+        handleMenuClick={data => handleMenuClick(data)}
+        width={["8%", "0%", "27%", "15%", "15%", "15%", "15%", "5%"]}
       />
       <Fab
         id="category-Add"
@@ -165,6 +198,8 @@ const Category = props => {
         okLabelFocus={okLabelFocus}
         cancelLabelFocus={cancelLabelFocus}
         open={confirmationOpen}
+        handleOk={() => handleConfirmationOk()}
+        handleClose={() => handleConfirmationClose()}
       />
       <Snackbar
         open={snackopen}

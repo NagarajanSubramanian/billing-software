@@ -25,7 +25,7 @@ const TableHeaderData = props => {
         {props.headerData.map((data, index) => (
           <TableCell
             size="small"
-            key={index}
+            key={data.fieldId}
             classes={{ root: style.tablecellRoot }}
           >
             <Typography
@@ -36,7 +36,7 @@ const TableHeaderData = props => {
                 textOverflow: "ellipsis"
               }}
             >
-              {data}
+              {data.headerName}
             </Typography>
           </TableCell>
         ))}

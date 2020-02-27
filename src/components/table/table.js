@@ -30,7 +30,10 @@ const TableData = props => {
         </colgroup>
         <TableHeader headerData={props.header} width={props.width} />
         <TableContent
+          headerProps={props.header}
+          contextMenu={props.contextMenu}
           content={props.data}
+          fieldId={props.fieldId}
           handleMenuClick={data => props.handleMenuClick(data)}
         />
       </Table>
