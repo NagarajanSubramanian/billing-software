@@ -43,10 +43,10 @@ const TableContentData = props => {
   };
   const { classes } = props;
 
-  const loadContextMenu = (props, value, keys, index) => {
+  const loadContextMenu = (props, value, index) => {
     if (props.contextMenu) {
       return (
-        <TableCell key={index + keys.fieldId} className={classes.root}>
+        <TableCell key={index + props.fieldId} className={classes.root}>
           <IconButton
             aria-label="More"
             aria-owns={false ? "long-menu" : undefined}
@@ -71,16 +71,17 @@ const TableContentData = props => {
         </TableCell>
       );
     } else {
-      <React.Fragment />;
+      return <React.Fragment />;
     }
   };
+  console.log(props.headerProps);
   return (
     <TableBody>
       {props.content.map((value, index) => (
         <TableRow hover key={index}>
           {props.headerProps.map(keys => {
             return (
-              <TableCell key={index + keys.fieldId} className={classes.root}>
+              <TableCell key={index + keys.field} className={classes.root}>
                 <Typography
                   variant="body2"
                   className={classes.root}
@@ -89,12 +90,12 @@ const TableContentData = props => {
                     textOverflow: "ellipsis"
                   }}
                 >
-                  {value[keys.fieldId]}
+                  {value[keys.field]}
                 </Typography>
               </TableCell>
             );
           })}
-          {loadContextMenu(props, value, keys, index)}
+          {loadContextMenu(props, value, index)}
         </TableRow>
       ))}
     </TableBody>

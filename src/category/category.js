@@ -99,16 +99,15 @@ const Category = props => {
 
   var headerProperty = [
     { filed: "no", visible: true, headerName: "No" },
-    { field: "catagoryId", visible: false, headerName: "Catagory ID" },
     { field: "catagoryName", visible: true, headerName: "Catagory Name" },
-    { filed: "catagoryShort", visible: true, headerName: "Short" },
+    { field: "catagoryShort", visible: true, headerName: "Short" },
     {
-      filed: "catagoryCommodityCode",
+      field: "catagoryCommodityCode",
       visible: true,
       headerName: "Commodity Code"
     },
-    { filed: "catagoryCst", visible: true, headerName: "CST" },
-    { filed: "catagoryVat", visible: true, headerName: "VAT" }
+    { field: "catagoryCst", visible: true, headerName: "CST" },
+    { field: "catagoryVat", visible: true, headerName: "VAT" }
   ];
   return (
     <div>
@@ -119,7 +118,7 @@ const Category = props => {
         data={props.catagoryData}
         contextMenu={true}
         handleMenuClick={data => handleMenuClick(data)}
-        width={["8%", "0%", "27%", "15%", "15%", "15%", "15%", "5%"]}
+        width={["8%", "27%", "15%", "15%", "15%", "15%", "5%"]}
       />
       <Fab
         id="category-Add"
