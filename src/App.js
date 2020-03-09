@@ -3,6 +3,7 @@ import "./App.css";
 import SideDrawer from "./components/sidedrawer/sidedrawer";
 import Spinner from "./../src/components/spinner/spinner";
 import Maintanance from "./../src/components/maintanence/underMaintanence";
+import { BACKEND_URL } from "./constants/constants";
 
 import { loadCatagory } from "./../src/redux/action/crackerAction";
 
@@ -20,7 +21,7 @@ class App extends React.Component {
   componentDidMount() {
     var self = this;
 
-    fetch("http://localhost:8081/getAll")
+    fetch(BACKEND_URL + "/getAll")
       .then(res => res.json())
       .then(
         result => {

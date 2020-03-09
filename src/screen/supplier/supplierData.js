@@ -1,11 +1,11 @@
 import React from "react";
-import SearchInput from "./../components/searchinput/searchInput";
-import Fab from "./../components/fab/Fab";
-import FormDialog from "./../components/dialog/dialog";
-import Snackbar from "./../components/snackbar/snackbar";
+import SearchInput from "./../../components/searchinput/searchInput";
+import Fab from "./../../components/fab/Fab";
+import FormDialog from "./../../components/dialog/dialog";
+import Snackbar from "./../../components/snackbar/snackbar";
 import TextField from "@material-ui/core/TextField";
-import NumericInput from "./../components/numericinput/numericinput";
-import Table from "./../components/table/table";
+import NumericInput from "./../../components/numericinput/numericinput";
+import Table from "./../../components/table/table";
 
 export default function Supplier() {
   const [open, setOpen] = React.useState(false);

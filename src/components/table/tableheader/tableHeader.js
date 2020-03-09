@@ -7,26 +7,52 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyle = makeStyles(theme => ({
   tablecellRoot: {
-    padding: "0px 2px",
-    textAlign: "center"
+    padding: "0px 2px"
   },
   headerTypography: {
     fontSize: "16px",
 
     fontWeight: "900"
+  },
+  rowHeight: {
+    height: "40px"
   }
 }));
+
+const loadContextMenuHeader = (props, style) => {
+  if (props.contextMenu) {
+    return (
+      <TableCell
+        size="small"
+        classes={{ root: style.tablecellRoot }}
+      ></TableCell>
+    );
+  } else {
+    return <React.Fragment />;
+  }
+};
+
+const alignValue = align => {
+  if (align === "left") {
+    return "left";
+  } else if (align === "right") {
+    return "right";
+  } else {
+    return "center";
+  }
+};
 
 const TableHeaderData = props => {
   const style = useStyle();
   return (
     <TableHead>
-      <TableRow>
+      <TableRow className={style.rowHeight}>
         {props.headerData.map((data, index) => (
           <TableCell
             size="small"
             key={data.fieldId}
             classes={{ root: style.tablecellRoot }}
+            align={alignValue(data.headerAlign)}
           >
             <Typography
               classes={{ root: style.headerTypography }}
@@ -40,6 +66,7 @@ const TableHeaderData = props => {
             </Typography>
           </TableCell>
         ))}
+        {loadContextMenuHeader(props, style)}
       </TableRow>
     </TableHead>
   );

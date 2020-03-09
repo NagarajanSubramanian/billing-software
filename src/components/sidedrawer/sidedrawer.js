@@ -9,15 +9,15 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Backdrop from "@material-ui/core/Backdrop";
 import { makeStyles } from "@material-ui/core/styles";
-import ProductDetails from "../../product/productmaster/ProductMaster";
-import CustomerDetails from "../../customer/customermaster/CustomerMaster";
-import Category from "./../../category/category";
-import Supplier from "./../../supplier/supplierData";
+import ProductDetails from "../../screen/productmaster/ProductMaster";
+import CustomerDetails from "../../screen/customermaster/CustomerMaster";
+import Category from "./../../screen/category/category";
+import Supplier from "./../../screen/supplier/supplierData";
 import ListData from "./../list/list";
-import NumericField from "./../numericinput/numericinput";
+import { APP_BAR_COLOR } from "./../../constants/constants";
 
 const drawerWidth = 240;
-const backgroundColor = "black";
+const backgroundColor = APP_BAR_COLOR;
 
 const values = [
   {

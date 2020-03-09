@@ -1,13 +1,21 @@
 import React from "react";
-import Fab from "./../components/fab/Fab";
-import FormDialog from "./../components/dialog/dialog";
+import Fab from "./../../components/fab/Fab";
+import FormDialog from "./../../components/dialog/dialog";
 import TextField from "@material-ui/core/TextField";
-import Snackbar from "./../components/snackbar/snackbar";
-import SearchInput from "./../components/searchinput/searchInput";
-import Table from "./../components/table/table";
+import Snackbar from "./../../components/snackbar/snackbar";
+import SearchInput from "./../../components/searchinput/searchInput";
+import Table from "./../../components/table/table";
 import { connect } from "react-redux";
-import NumericInput from "./../components/numericinput/numericinput";
-import ConfimationDialog from "./../components/confimationdialog/confirmationDialog";
+import NumericInput from "./../../components/numericinput/numericinput";
+import ConfimationDialog from "./../../components/confimationdialog/confirmationDialog";
+import { BACKEND_URL } from "./../../constants/constants";
+
+const catagoryNameRef = React.createRef();
+const shortRef = React.createRef();
+const commodityRef = React.createRef();
+const cstRef = React.createRef();
+const vatRef = React.createRef();
+const cancelButtonRef = React.createRef();
 
 const Category = props => {
   const [open, setOpen] = React.useState(false);
@@ -31,11 +39,6 @@ const Category = props => {
   const [gridData, setGridData] = React.useState([]);
   const [mode, setMode] = React.useState("");
   const [gridSelectData, setSelectedGridData] = React.useState({});
-  const catagoryNameRef = React.createRef();
-  const shortRef = React.createRef();
-  const commodityRef = React.createRef();
-  const cstRef = React.createRef();
-  const vatRef = React.createRef();
 
   const { classes } = props;
   function onCancelClick() {
@@ -52,20 +55,20 @@ const Category = props => {
     ) {
       setCurrentData({
         catagoryName: catagoryNameRef.current.value,
-        catagoryShort: shortRef.current.value,
+        catagoryShort: shortRef.current.value.replace(/,/g, ""),
         catagoryCommodityCode: commodityRef.current.value,
-        catagoryCst: cstRef.current.value,
-        catagoryVat: vatRef.current.value
+        catagoryCst: cstRef.current.value.replace(/,/g, ""),
+        catagoryVat: vatRef.current.value.replace(/,/g, "")
       });
       setConfirmationOpen(true);
     } else {
       setSnackOpen(true);
       setSnackType("error");
       setMessage("Enter all fields.");
+      setTimeout(() => catagoryNameRef.current.focus(), 300);
     }
   }
 
-  function onKeyPress() {}
   function handleClose() {
     setSnackOpen(false);
   }
@@ -75,7 +78,7 @@ const Category = props => {
   }
   function handleConfirmationOk() {
     currentData["mode"] = "add";
-    fetch("http://localhost:8081/insertCatagory", {
+    fetch(BACKEND_URL + "/insertCatagory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(currentData)
@@ -83,9 +86,20 @@ const Category = props => {
       .then(res => res.text())
       .then(
         data => {
-          setSnackOpen(true);
-          setSnackType("success");
-          setMessage("Saved successfully.");
+          if (data === "exist") {
+            setSnackOpen(true);
+            setSnackType("error");
+            setMessage("Catagory Name already exists.");
+            setTimeout(() => catagoryNameRef.current.focus(), 100);
+            catagoryNameRef.current.focus();
+          } else {
+            setSnackOpen(true);
+            setSnackType("success");
+            setMessage("Saved successfully.");
+            setOpen(false);
+            setMode(mode);
+          }
+          setConfirmationOpen(false);
         },
         error => {}
       );
@@ -94,27 +108,83 @@ const Category = props => {
     setConfirmationOpen(false);
   }
   const handleMenuClick = data => {
-    console.log(data);
+    var value = props.catagoryData.filter(
+      value => value.catagoryId === data.id
+    );
+    if (value.length > 0) {
+      setSelectedGridData(value[0]);
+      setOpen(true);
+      setMode(data.menuId);
+      if (data.menuId === "view") {
+        setTimeout(() => cancelButtonRef.current.focus(), 100);
+      }
+    }
   };
 
   var headerProperty = [
-    { filed: "no", visible: true, headerName: "No" },
-    { field: "catagoryName", visible: true, headerName: "Catagory Name" },
-    { field: "catagoryShort", visible: true, headerName: "Short" },
+    {
+      filed: "no",
+      visible: true,
+      headerName: "No",
+      align: "center",
+      headerAlign: "center",
+      type: "number",
+      commaSeparate: false
+    },
+    {
+      field: "catagoryName",
+      visible: true,
+      headerName: "Catagory Name",
+      align: "left",
+      headerAlign: "center",
+      type: "string",
+      commaSeparate: false
+    },
+    {
+      field: "catagoryShort",
+      visible: true,
+      headerName: "Short",
+      align: "center",
+      headerAlign: "center",
+      type: "number",
+      commaSeparate: true
+    },
     {
       field: "catagoryCommodityCode",
       visible: true,
-      headerName: "Commodity Code"
+      headerName: "Commodity Code",
+      align: "left",
+      headerAlign: "center",
+      type: "string",
+      commaSeparate: false
     },
-    { field: "catagoryCst", visible: true, headerName: "CST" },
-    { field: "catagoryVat", visible: true, headerName: "VAT" }
+    {
+      field: "catagoryCst",
+      visible: true,
+      headerName: "CST",
+      align: "center",
+      headerAlign: "center",
+      type: "number",
+      commaSeparate: true
+    },
+    {
+      field: "catagoryVat",
+      visible: true,
+      headerName: "VAT",
+      align: "center",
+      headerAlign: "center",
+      type: "number",
+      commaSeparate: true
+    }
   ];
   return (
     <div>
       <SearchInput placeholder="Search Catagory Name, Commodity code" />
       <Table
+        id="catagory-table"
         header={headerProperty}
         fieldId="catagoryId"
+        numberFiled="no"
         data={props.catagoryData}
         contextMenu={true}
         handleMenuClick={data => handleMenuClick(data)}
@@ -126,6 +196,7 @@ const Category = props => {
         onClick={openAddDialog}
       />
       <FormDialog
+        ref={cancelButtonRef}
         saveButton={mode !== "view"}
         open={open}
         onCancelClick={() => onCancelClick()}
@@ -133,10 +204,10 @@ const Category = props => {
         dialogTitle="Add Catagory"
       >
         <TextField
-          autoFocus={mode === "add"}
-          defaultValue={mode === "add" ? "" : gridSelectData.id}
+          autoFocus={mode === "add" || mode === "edit"}
+          defaultValue={mode === "add" ? "" : gridSelectData.catagoryName}
           margin="dense"
-          disabled={mode === "edit" || mode === "view"}
+          disabled={mode === "view"}
           id="catagory-name"
           label="Catagory Name"
           type="text"
@@ -145,17 +216,24 @@ const Category = props => {
         />
 
         <NumericInput
-          autoFocus={mode === "edit"}
-          defaultValue={mode === "add" ? "" : gridSelectData.name}
+          defaultValue={
+            mode === "add"
+              ? ""
+              : parseFloat(gridSelectData.catagoryShort).toLocaleString("en-IN")
+          }
           id="catagory-short"
           disabled={mode === "view"}
           ref={shortRef}
           fullWidth
           label="Short"
+          maxLength={5}
+          commaSeparate={true}
         />
         <TextField
           margin="normal"
-          defaultValue={mode === "add" ? "" : gridSelectData.address}
+          defaultValue={
+            mode === "add" ? "" : gridSelectData.catagoryCommodityCode
+          }
           id="catagory-commodity-code"
           disabled={mode === "view"}
           multiline
@@ -167,22 +245,33 @@ const Category = props => {
         />
 
         <NumericInput
-          defaultValue={mode === "add" ? "" : gridSelectData.name}
+          defaultValue={
+            mode === "add"
+              ? ""
+              : parseFloat(gridSelectData.catagoryCst).toLocaleString("en-IN")
+          }
           id="catagory-cst"
           disabled={mode === "view"}
           ref={cstRef}
           fullWidth
+          commaSeparate={true}
           label="CST"
           precision={2}
         />
 
         <NumericInput
-          defaultValue={mode === "add" ? "" : gridSelectData.name}
+          defaultValue={
+            mode === "add"
+              ? ""
+              : parseFloat(gridSelectData.catagoryVat).toLocaleString("en-IN")
+          }
           id="catagory-vat"
           disabled={mode === "view"}
           ref={vatRef}
           fullWidth
           label="VAT"
+          maxLength={5}
+          commaSeparate={true}
           precision={2}
         />
       </FormDialog>
@@ -197,7 +286,7 @@ const Category = props => {
         okLabelFocus={okLabelFocus}
         cancelLabelFocus={cancelLabelFocus}
         open={confirmationOpen}
-        handleOk={() => handleConfirmationOk()}
+        handleOk={handleConfirmationOk}
         handleClose={() => handleConfirmationClose()}
       />
       <Snackbar

@@ -14,7 +14,10 @@ import { withStyles } from "@material-ui/core/styles";
 
 const style = {
   root: {
-    maxWidth: 100
+    padding: "0px 2px"
+  },
+  contentRowHeight: {
+    height: "32px"
   }
 };
 
@@ -74,14 +77,39 @@ const TableContentData = props => {
       return <React.Fragment />;
     }
   };
-  console.log(props.headerProps);
+
+  const alignValue = align => {
+    if (align === "left") {
+      return "left";
+    } else if (align === "right") {
+      return "right";
+    } else {
+      return "center";
+    }
+  };
+
+  const setValue = (keys, numberField, value, index) => {
+    if (keys.field === numberField) {
+      return index + 1;
+    } else {
+      if (keys.type === "number" && keys.commaSeparate && value) {
+        return parseFloat(value).toLocaleString("en-IN");
+      }
+      return value;
+    }
+  };
+
   return (
     <TableBody>
       {props.content.map((value, index) => (
-        <TableRow hover key={index}>
+        <TableRow hover key={index} className={classes.contentRowHeight}>
           {props.headerProps.map(keys => {
             return (
-              <TableCell key={index + keys.field} className={classes.root}>
+              <TableCell
+                key={index + keys.field}
+                className={classes.root}
+                align={alignValue(keys.align)}
+              >
                 <Typography
                   variant="body2"
                   className={classes.root}
@@ -90,7 +118,7 @@ const TableContentData = props => {
                     textOverflow: "ellipsis"
                   }}
                 >
-                  {value[keys.field]}
+                  {setValue(keys, props.numberField, value[keys.field], index)}
                 </Typography>
               </TableCell>
             );

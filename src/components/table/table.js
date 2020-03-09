@@ -22,14 +22,19 @@ const TableData = props => {
   const { classes } = props;
   return (
     <Paper className={classes.root}>
-      <Table className={clsx(props.className, classes.table)}>
+      <Table className={clsx(props.className, classes.table)} id={props.id}>
         <colgroup>
           {props.width.map((data, i) => (
             <col width={data} key={i} />
           ))}
         </colgroup>
-        <TableHeader headerData={props.header} width={props.width} />
+        <TableHeader
+          headerData={props.header}
+          width={props.width}
+          contextMenu={props.contextMenu}
+        />
         <TableContent
+          numberField={props.numberField}
           headerProps={props.header}
           contextMenu={props.contextMenu}
           content={props.data}
