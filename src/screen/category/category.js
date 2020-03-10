@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import NumericInput from "./../../components/numericinput/numericinput";
 import ConfimationDialog from "./../../components/confimationdialog/confirmationDialog";
 import { BACKEND_URL } from "./../../constants/constants";
+import { loadCatagory } from "./../../../src/redux/action/crackerAction";
 
 const catagoryNameRef = React.createRef();
 const shortRef = React.createRef();
@@ -19,12 +20,14 @@ const cancelButtonRef = React.createRef();
 
 const Category = props => {
   const [open, setOpen] = React.useState(false);
+  const [catagoryId, setCatagoryId] = React.useState("");
   const [confimationTitle, setConfimationTitle] = React.useState(
     "Confirmation"
   );
   const [confirmationContent, setConfimationContent] = React.useState(
     "Do you want to add record?"
   );
+  const [searchValue, setSearchValue] = React.useState("");
   const [okLabel, setOkLabel] = React.useState("YES");
   const [cancelLabel, setCancelLabel] = React.useState("NO");
   const [okLabelFocus, setOKLabelFocus] = React.useState(true);
@@ -40,7 +43,6 @@ const Category = props => {
   const [mode, setMode] = React.useState("");
   const [gridSelectData, setSelectedGridData] = React.useState({});
 
-  const { classes } = props;
   function onCancelClick() {
     setOpen(false);
   }
@@ -65,7 +67,7 @@ const Category = props => {
       setSnackOpen(true);
       setSnackType("error");
       setMessage("Enter all fields.");
-      setTimeout(() => catagoryNameRef.current.focus(), 300);
+      setTimeout(() => catagoryNameRef.current.focus(), 100);
     }
   }
 
@@ -73,11 +75,15 @@ const Category = props => {
     setSnackOpen(false);
   }
   function openAddDialog() {
+    setCatagoryId("");
     setOpen(true);
     setMode("add");
   }
   function handleConfirmationOk() {
-    currentData["mode"] = "add";
+    if (catagoryId) {
+      currentData["catagoryId"] = catagoryId;
+    }
+    currentData["mode"] = mode;
     fetch(BACKEND_URL + "/insertCatagory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -91,7 +97,6 @@ const Category = props => {
             setSnackType("error");
             setMessage("Catagory Name already exists.");
             setTimeout(() => catagoryNameRef.current.focus(), 100);
-            catagoryNameRef.current.focus();
           } else {
             setSnackOpen(true);
             setSnackType("success");
@@ -106,13 +111,16 @@ const Category = props => {
   }
   function handleConfirmationClose() {
     setConfirmationOpen(false);
+    catagoryNameRef.current.focus();
   }
   const handleMenuClick = data => {
     var value = props.catagoryData.filter(
       value => value.catagoryId === data.id
     );
+    setCatagoryId(data.id);
     if (value.length > 0) {
       setSelectedGridData(value[0]);
+      setCurrentData(value[0]);
       setOpen(true);
       setMode(data.menuId);
       if (data.menuId === "view") {
@@ -177,14 +185,39 @@ const Category = props => {
       commaSeparate: true
     }
   ];
+
+  const searchOnChange = event => {
+    setSearchValue(event.currentTarget.value);
+    fetch(BACKEND_URL + "/searchCatgoryData", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ catagoryName: event.currentTarget.value })
+    })
+      .then(res => res.json())
+      .then(
+        data => {
+          props.loadCatagory(data);
+        },
+        error => {}
+      );
+  };
   return (
     <div>
-      <SearchInput placeholder="Search Catagory Name, Commodity code" />
+      <SearchInput
+        placeholder="Search Catagory Name, Catagory Short,Commodity code"
+        onChange={searchOnChange}
+      />
       <Table
         id="catagory-table"
         header={headerProperty}
         fieldId="catagoryId"
         numberFiled="no"
+        searchData={searchValue}
+        searchColumn={[
+          "catagoryName",
+          "catagoryShort",
+          "catagoryCommodityCode"
+        ]}
         data={props.catagoryData}
         contextMenu={true}
         handleMenuClick={data => handleMenuClick(data)}
@@ -287,7 +320,7 @@ const Category = props => {
         cancelLabelFocus={cancelLabelFocus}
         open={confirmationOpen}
         handleOk={handleConfirmationOk}
-        handleClose={() => handleConfirmationClose()}
+        handleClose={handleConfirmationClose}
       />
       <Snackbar
         open={snackopen}
@@ -305,4 +338,10 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(Category);
+const mapDispatchToProps = dispatch => {
+  return {
+    loadCatagory: catagoryData => dispatch(loadCatagory(catagoryData))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Category);

@@ -4,6 +4,7 @@ import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
+import CloseIcon from "@material-ui/icons/Close";
 
 const theme = createMuiTheme({
   overrides: {
@@ -32,7 +33,9 @@ const useStyle = makeStyles(theme => ({
     "&::placeholder": {
       textOverflow: "ellipsis !important",
       fontSize: "15px"
-    }
+    },
+    paddingLeft: "4px",
+    paddingRight: "4px"
   }
 }));
 
@@ -44,10 +47,16 @@ const SearchInput = props => {
         placeholder={props.placeholder}
         variant="outlined"
         fullWidth
+        onChange={props.onChange}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
               <SearchIcon />
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="start">
+              <CloseIcon />
             </InputAdornment>
           ),
           classes: { input: style.input }

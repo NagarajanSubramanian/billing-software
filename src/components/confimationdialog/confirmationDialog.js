@@ -5,6 +5,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
+import { APP_BAR_COLOR } from "./../../constants/constants";
 
 const ConfiramtionDialog = props => {
   return (
@@ -14,7 +15,16 @@ const ConfiramtionDialog = props => {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">{props.dialogTitle}</DialogTitle>
+      <DialogTitle
+        id="alert-dialog-title"
+        style={{
+          background: APP_BAR_COLOR,
+          color: "white",
+          justifyContent: "left"
+        }}
+      >
+        {props.dialogTitle}
+      </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           {props.dialogContent}
@@ -29,7 +39,7 @@ const ConfiramtionDialog = props => {
           {props.okLabel}
         </Button>
         <Button
-          onClick={props.handleCancel}
+          onClick={props.handleClose}
           color={props.cancelButtonColor ? "primary" : ""}
           autoFocus={props.cancelLabelFocus}
         >

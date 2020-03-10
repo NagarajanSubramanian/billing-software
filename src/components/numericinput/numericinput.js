@@ -35,7 +35,6 @@ const NumericField = React.forwardRef((props, ref) => {
   }
 
   const handleFocusOut = event => {
-    console.log(453);
     if (props.commaSeparate && refs.current.value) {
       var value = refs.current.value.replace(/,/g, "");
       value = parseFloat(value).toLocaleString("en-IN");

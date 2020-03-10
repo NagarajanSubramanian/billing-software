@@ -6,30 +6,50 @@ import Snackbar from "./../../components/snackbar/snackbar";
 import TextField from "@material-ui/core/TextField";
 import NumericInput from "./../../components/numericinput/numericinput";
 import Table from "./../../components/table/table";
+import ConfimationDialog from "./../../components/confimationdialog/confirmationDialog";
+import { BACKEND_URL } from "./../../constants/constants";
+import { connect } from "react-redux";
+import { loadSupplier } from "./../../../src/redux/action/crackerAction";
 
-export default function Supplier() {
+const supplierNameRef = React.createRef();
+const shortNameRef = React.createRef();
+const addressRef = React.createRef();
+const cityRef = React.createRef();
+const pincodeRef = React.createRef();
+const mobileRef = React.createRef();
+const emailRef = React.createRef();
+const tinRef = React.createRef();
+const cstRef = React.createRef();
+const panRef = React.createRef();
+const Supplier = props => {
+  const [searchValue, setSearchValue] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [snackopen, setSnackOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [snackType, setSnackType] = React.useState("success");
   const [gridData, setGridData] = React.useState([]);
+  const [supplierId, setSupplierId] = React.useState("");
   const [mode, setMode] = React.useState("");
   const [gridSelectData, setSelectedGridData] = React.useState({});
 
-  const supplierNameRef = React.createRef();
-  const shortNameRef = React.createRef();
-  const addressRef = React.createRef();
-  const cityRef = React.createRef();
-  const pincodeRef = React.createRef();
-  const mobileRef = React.createRef();
-  const emailRef = React.createRef();
-  const tinRef = React.createRef();
-  const cstRef = React.createRef();
-  const panRef = React.createRef();
+  const [confimationTitle, setConfimationTitle] = React.useState(
+    "Confirmation"
+  );
+  const [confirmationContent, setConfimationContent] = React.useState(
+    "Do you want to add record?"
+  );
+  const [okLabel, setOkLabel] = React.useState("YES");
+  const [cancelLabel, setCancelLabel] = React.useState("NO");
+  const [okLabelFocus, setOKLabelFocus] = React.useState(true);
+  const [cancelLabelFocus, setCancelLabelFocus] = React.useState(false);
+  const [confirmationOpen, setConfirmationOpen] = React.useState(false);
+  const [okButtonColor, setOkButtonColor] = React.useState("primary");
+  const [cancelButtonColor, setCancelButtonColor] = React.useState("primary");
 
   function openAddDialog() {
     setOpen(true);
     setMode("add");
+    setSupplierId("");
   }
 
   function onKeyPress() {}
@@ -40,17 +60,174 @@ export default function Supplier() {
   function onCancelClick() {
     setOpen(false);
   }
-  function handleMenuClick() {}
-  function onSaveClick() {}
+  function handleMenuClick(data) {
+    var value = props.supplierData.filter(
+      value => value.supplierId === data.id
+    );
+    setSupplierId(data.id);
+    setMode(data.menuId);
+    if (value.length > 0) {
+      setSelectedGridData(value[0]);
+      setOpen(true);
+      if (data.menuId === "view") {
+      }
+    }
+  }
+  function onSaveClick() {
+    if (
+      supplierNameRef.current.value &&
+      shortNameRef.current.value &&
+      addressRef.current.value &&
+      cityRef.current.value &&
+      pincodeRef.current.value &&
+      mobileRef.current.value &&
+      emailRef.current.value &&
+      tinRef.current.value &&
+      cstRef.current.value
+    ) {
+      setConfirmationOpen(true);
+    } else {
+      setSnackOpen(true);
+      setSnackType("error");
+      setMessage("Enter all fields.");
+      setTimeout(() => supplierNameRef.current.focus(), 0);
+    }
+  }
+
+  function handleConfirmationOk() {
+    var currentData = {};
+    if (supplierId) {
+      currentData["supplierId"] = supplierId;
+    }
+    currentData["mode"] = mode;
+    currentData["supplierName"] = supplierNameRef.current.value;
+    currentData["supplierShortName"] = shortNameRef.current.value;
+    currentData["supplierAddress"] = addressRef.current.value;
+    currentData["supplierCity"] = cityRef.current.value;
+    currentData["supplierPincode"] = pincodeRef.current.value;
+    currentData["supplierPhoneno"] = mobileRef.current.value;
+    currentData["supplierEmail"] = emailRef.current.value;
+    currentData["supplierTin"] = tinRef.current.value;
+    currentData["supplierCst"] = cstRef.current.value;
+    currentData["supplierPan"] = panRef.current.value;
+    fetch(BACKEND_URL + "/insertSupplier", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(currentData)
+    })
+      .then(res => res.text())
+      .then(
+        data => {
+          if (data === "exist") {
+            setSnackOpen(true);
+            setSnackType("error");
+            setMessage("Catagory Name already exists.");
+            //setTimeout(() => catagoryNameRef.current.focus(), 100);
+            //catagoryNameRef.current.focus();
+          } else {
+            setSnackOpen(true);
+            setSnackType("success");
+            setMessage("Saved successfully.");
+            setOpen(false);
+            setMode(mode);
+          }
+          setConfirmationOpen(false);
+        },
+        error => {}
+      );
+  }
+
+  function handleConfirmationClose() {
+    setConfirmationOpen(false);
+  }
+
+  var headerProperty = [
+    {
+      filed: "no",
+      visible: true,
+      headerName: "No",
+      align: "center",
+      headerAlign: "center",
+      type: "number",
+      commaSeparate: false
+    },
+    {
+      field: "supplierName",
+      visible: true,
+      headerName: "Supplier Name",
+      align: "left",
+      headerAlign: "center",
+      type: "string",
+      commaSeparate: false
+    },
+    {
+      field: "supplierShortName",
+      visible: true,
+      headerName: "Short Name",
+      align: "left",
+      headerAlign: "center",
+      type: "string",
+      commaSeparate: false
+    },
+    {
+      field: "supplierCity",
+      visible: true,
+      headerName: "City",
+      align: "left",
+      headerAlign: "center",
+      type: "string",
+      commaSeparate: false
+    },
+    {
+      field: "supplierPhoneno",
+      visible: true,
+      headerName: "Mobile No",
+      align: "center",
+      headerAlign: "center",
+      type: "number",
+      commaSeparate: false
+    },
+    {
+      field: "supplierEmail",
+      visible: true,
+      headerName: "Email",
+      align: "left",
+      headerAlign: "center",
+      type: "string",
+      commaSeparate: false
+    }
+  ];
+
+  const searchOnChange = event => {
+    setSearchValue(event.currentTarget.value);
+    fetch(BACKEND_URL + "/searchSupplierData", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ supplierName: event.currentTarget.value })
+    })
+      .then(res => res.json())
+      .then(
+        data => {
+          props.loadSupplier(data);
+        },
+        error => {}
+      );
+  };
 
   return (
     <React.Fragment>
-      <SearchInput placeholder="Search Supplier" />
+      <SearchInput placeholder="Search Supplier" onChange={searchOnChange} />
       <Table
-        header={["Supplier Name", "Short Name", "Phone", "Email", ""]}
-        data={[]}
+        header={headerProperty}
+        data={props.supplierData}
+        fieldId="supplierId"
+        numberFiled="no"
+        id="supplier-table"
+        contextMenu={true}
+        searchData={searchValue}
+        searchColumn={["supplierName", "supplierShortName", "supplierCity"]}
         handleMenuClick={handleMenuClick}
-        width={["25", "20%", "25%", "25%", "5%"]}
+        width={["8%", "25%", "15%", "17%", "13%", "17%", "5%"]}
       />
       <Fab
         id="supplier-Add"
@@ -65,10 +242,10 @@ export default function Supplier() {
         dialogTitle="Add Supplier"
       >
         <TextField
-          autoFocus={mode === "add"}
-          defaultValue={mode === "add" ? "" : gridSelectData.id}
+          autoFocus={mode === "add" || mode === "edit"}
+          defaultValue={mode === "add" ? "" : gridSelectData.supplierName}
           margin="dense"
-          disabled={mode === "edit" || mode === "view"}
+          disabled={mode === "view"}
           id="supplier-name"
           label="Supplier Name"
           type="text"
@@ -78,8 +255,7 @@ export default function Supplier() {
 
         <TextField
           margin="dense"
-          autoFocus={mode === "edit"}
-          defaultValue={mode === "add" ? "" : gridSelectData.name}
+          defaultValue={mode === "add" ? "" : gridSelectData.supplierShortName}
           id="short-name-supplier"
           disabled={mode === "view"}
           label="Short Name"
@@ -89,7 +265,7 @@ export default function Supplier() {
         />
         <TextField
           margin="normal"
-          defaultValue={mode === "add" ? "" : gridSelectData.address}
+          defaultValue={mode === "add" ? "" : gridSelectData.supplierAddress}
           id="address-supplier-code"
           disabled={mode === "view"}
           multiline
@@ -101,7 +277,7 @@ export default function Supplier() {
         />
         <TextField
           margin="dense"
-          defaultValue={mode === "add" ? "" : gridSelectData.phoneNo}
+          defaultValue={mode === "add" ? "" : gridSelectData.supplierCity}
           disabled={mode === "view"}
           id="city-supplier"
           label="City"
@@ -112,8 +288,7 @@ export default function Supplier() {
         />
 
         <NumericInput
-          autoFocus={mode === "edit"}
-          defaultValue={mode === "add" ? "" : gridSelectData.name}
+          defaultValue={mode === "add" ? "" : gridSelectData.supplierPincode}
           id="supplier-pincode"
           disabled={mode === "view"}
           ref={pincodeRef}
@@ -122,8 +297,7 @@ export default function Supplier() {
           maxLength={6}
         />
         <NumericInput
-          autoFocus={mode === "edit"}
-          defaultValue={mode === "add" ? "" : gridSelectData.name}
+          defaultValue={mode === "add" ? "" : gridSelectData.supplierPhoneno}
           id="supplier-mobile"
           disabled={mode === "view"}
           ref={mobileRef}
@@ -133,7 +307,7 @@ export default function Supplier() {
         />
         <TextField
           margin="dense"
-          defaultValue={mode === "add" ? "" : gridSelectData.email}
+          defaultValue={mode === "add" ? "" : gridSelectData.supplierEmail}
           disabled={mode === "view"}
           id="supplier-email"
           label="Email"
@@ -143,7 +317,7 @@ export default function Supplier() {
         />
         <TextField
           margin="dense"
-          defaultValue={mode === "add" ? "" : gridSelectData.email}
+          defaultValue={mode === "add" ? "" : gridSelectData.supplierTin}
           disabled={mode === "view"}
           id="supplier-tin"
           label="TIN"
@@ -153,7 +327,7 @@ export default function Supplier() {
         />
         <TextField
           margin="dense"
-          defaultValue={mode === "add" ? "" : gridSelectData.email}
+          defaultValue={mode === "add" ? "" : gridSelectData.supplierCst}
           disabled={mode === "view"}
           id="supplier-cst"
           label="CST"
@@ -163,7 +337,7 @@ export default function Supplier() {
         />
         <TextField
           margin="dense"
-          defaultValue={mode === "add" ? "" : gridSelectData.email}
+          defaultValue={mode === "add" ? "" : gridSelectData.supplierPan}
           disabled={mode === "view"}
           id="supplier-pan"
           label="PAN"
@@ -172,6 +346,20 @@ export default function Supplier() {
           fullWidth
         />
       </FormDialog>
+      <ConfimationDialog
+        id="catagory-add-confiramtion"
+        dialogTitle={confimationTitle}
+        dialogContent={confirmationContent}
+        okLabel={okLabel}
+        cancelLabel={cancelLabel}
+        okButtonColor={okButtonColor}
+        cancelButtonColor={cancelButtonColor}
+        okLabelFocus={okLabelFocus}
+        cancelLabelFocus={cancelLabelFocus}
+        open={confirmationOpen}
+        handleOk={handleConfirmationOk}
+        handleClose={() => handleConfirmationClose()}
+      />
       <Snackbar
         open={snackopen}
         type={snackType}
@@ -180,4 +368,18 @@ export default function Supplier() {
       />
     </React.Fragment>
   );
-}
+};
+
+const mapStateToProps = state => {
+  return {
+    supplierData: state.supplierData
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    loadSupplier: supplierData => dispatch(loadSupplier(supplierData))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Supplier);

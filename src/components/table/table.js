@@ -39,6 +39,8 @@ const TableData = props => {
           contextMenu={props.contextMenu}
           content={props.data}
           fieldId={props.fieldId}
+          searchData={props.searchData}
+          searchColumn={props.searchColumn}
           handleMenuClick={data => props.handleMenuClick(data)}
         />
       </Table>

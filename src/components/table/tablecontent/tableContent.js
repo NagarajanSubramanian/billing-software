@@ -88,12 +88,19 @@ const TableContentData = props => {
     }
   };
 
-  const setValue = (keys, numberField, value, index) => {
-    if (keys.field === numberField) {
+  const setValue = (keys, value, index) => {
+    if (keys.field === props.numberField) {
       return index + 1;
     } else {
       if (keys.type === "number" && keys.commaSeparate && value) {
         return parseFloat(value).toLocaleString("en-IN");
+      }
+      if (props.searchColumn && props.searchColumn.indexOf(keys.field) >= 0) {
+        if (props.searchData) {
+          var regex = new RegExp(props.searchData, "gi");
+          value = value.replace(regex, "<mark>" + props.searchData + "</mark>");
+          return value;
+        }
       }
       return value;
     }
@@ -117,9 +124,10 @@ const TableContentData = props => {
                     overflow: "hidden",
                     textOverflow: "ellipsis"
                   }}
-                >
-                  {setValue(keys, props.numberField, value[keys.field], index)}
-                </Typography>
+                  dangerouslySetInnerHTML={{
+                    __html: setValue(keys, value[keys.field], index)
+                  }}
+                ></Typography>
               </TableCell>
             );
           })}

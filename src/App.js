@@ -5,7 +5,10 @@ import Spinner from "./../src/components/spinner/spinner";
 import Maintanance from "./../src/components/maintanence/underMaintanence";
 import { BACKEND_URL } from "./constants/constants";
 
-import { loadCatagory } from "./../src/redux/action/crackerAction";
+import {
+  loadCatagory,
+  loadSupplier
+} from "./../src/redux/action/crackerAction";
 
 import { connect } from "react-redux";
 
@@ -27,6 +30,7 @@ class App extends React.Component {
         result => {
           self.setState({ screenFlag: "completed" });
           self.props.loadCatagory(result.catagory);
+          self.props.loadSupplier(result.supplier);
         },
         error => {
           self.setState({ screenFlag: "error" });
@@ -54,7 +58,8 @@ class App extends React.Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadCatagory: catagoryData => dispatch(loadCatagory(catagoryData))
+    loadCatagory: catagoryData => dispatch(loadCatagory(catagoryData)),
+    loadSupplier: supplierData => dispatch(loadSupplier(supplierData))
   };
 };
 
