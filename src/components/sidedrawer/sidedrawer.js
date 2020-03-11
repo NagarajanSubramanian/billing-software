@@ -15,6 +15,7 @@ import Category from "./../../screen/category/category";
 import Supplier from "./../../screen/supplier/supplierData";
 import ListData from "./../list/list";
 import { APP_BAR_COLOR } from "./../../constants/constants";
+import MasterInput from "./../masterinput/masterinput";
 
 const drawerWidth = 240;
 const backgroundColor = APP_BAR_COLOR;
@@ -93,7 +94,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SideDrawer(props) {
-  const [initial, setInitial] = React.useState("");
+  const [initial, setInitial] = React.useState("home");
   const [appName, changeAppName] = React.useState("Home");
   const classesData = useStyles();
   const [open, setOpen] = React.useState(false);
@@ -164,7 +165,7 @@ function SideDrawer(props) {
     } else if (id === "supplier") {
       return <Supplier />;
     } else {
-      return <React.Fragment />;
+      return <MasterInput />;
     }
   };
   return (

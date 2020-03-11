@@ -23,26 +23,39 @@ const styles = makeStyles(theme => ({
   }
 }));
 
-function checkSubItem(value, classesData, initial, props) {
-  const marginLeft = parseInt(props.marginLeft);
-  if (value.subItem && value.close) {
-    return (
-      <ListData
-        key={value.id}
-        values={value.subItem}
-        classesData={classesData}
-        id={value.subItemId}
-        marginLeft={marginLeft + 20}
-        initial={initial}
-        clickSideMenuHandler={props.clickSideMenuHandler}
-      />
-    );
-  } else {
-    return <React.Fragment />;
-  }
-}
-
 export default function ListData(props) {
+  function checkSubItem(value, classesData, initial) {
+    const marginLeft = parseInt(props.marginLeft);
+    if (value.subItem && value.close) {
+      return (
+        <ListData
+          key={value.id}
+          values={value.subItem}
+          classesData={classesData}
+          id={value.subItemId}
+          marginLeft={marginLeft + 20}
+          initial={initial}
+          clickSideMenuHandler={props.clickSideMenuHandler}
+        />
+      );
+    } else {
+      return <React.Fragment />;
+    }
+  }
+
+  function loadIcon(classesData, marginLeft, text) {
+    if (text.icon) {
+      return (
+        <ListItemIcon
+          className={classesData.listIcon}
+          style={{ paddingLeft: marginLeft + "px" }}
+        >
+          <Icon icon={text.icon} />
+        </ListItemIcon>
+      );
+    }
+  }
+
   const marginLeft = parseInt(props.marginLeft);
   var classesData = styles();
   return (
@@ -55,6 +68,7 @@ export default function ListData(props) {
               id={text.id}
               key={text.id}
               parentid={text.parentId}
+              style={props.style}
               selected={
                 text.id === props.initial && !text.subItem ? true : false
               }
@@ -64,18 +78,16 @@ export default function ListData(props) {
               )}
               onClick={props.clickSideMenuHandler}
             >
-              <ListItemIcon
-                className={classesData.listIcon}
-                style={{ paddingLeft: marginLeft + "px" }}
-              >
-                <Icon icon={text.icon} />
-              </ListItemIcon>
+              {loadIcon(classesData, marginLeft, text)}
               <ListItemText
+                disableTypography={props.disableTypography}
+                title={text.name}
+                style={props.listItemStyle}
                 className={classesData.listItemText}
                 primary={text.name}
               />
             </ListItem>
-            {checkSubItem(text, classesData, props.initial, props)}
+            {checkSubItem(text, classesData, props.initial)}
           </React.Fragment>
         ))}
       </List>
