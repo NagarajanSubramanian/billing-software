@@ -10,6 +10,7 @@ import ConfimationDialog from "./../../components/confimationdialog/confirmation
 import { BACKEND_URL } from "./../../constants/constants";
 import { connect } from "react-redux";
 import { loadSupplier } from "./../../../src/redux/action/crackerAction";
+import EmptyData from "./../../components/emptydata/emptyData";
 
 const supplierNameRef = React.createRef();
 const shortNameRef = React.createRef();
@@ -45,6 +46,10 @@ const Supplier = props => {
   const [confirmationOpen, setConfirmationOpen] = React.useState(false);
   const [okButtonColor, setOkButtonColor] = React.useState("primary");
   const [cancelButtonColor, setCancelButtonColor] = React.useState("primary");
+  const [emptyDataHeader, setEmptyDataHeader] = React.useState("No Data Found");
+  const [emptyDataDescription, setEmptyDataDescription] = React.useState(
+    "Please add new Catagory"
+  );
 
   function openAddDialog() {
     setOpen(true);
@@ -208,6 +213,9 @@ const Supplier = props => {
       .then(res => res.json())
       .then(
         data => {
+          if (data.length <= 0) {
+            setEmptyDataDescription("Please search with some other keyword.");
+          }
           props.loadSupplier(data);
         },
         error => {}
@@ -217,6 +225,11 @@ const Supplier = props => {
   return (
     <React.Fragment>
       <SearchInput placeholder="Search Supplier" onChange={searchOnChange} />
+      <EmptyData
+        emptyDataShow={props.supplierData.length <= 0}
+        emptyDataHeader={emptyDataHeader}
+        emptyDataDescription={emptyDataDescription}
+      />
       <Table
         header={headerProperty}
         data={props.supplierData}

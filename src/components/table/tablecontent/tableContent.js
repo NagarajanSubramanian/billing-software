@@ -98,6 +98,17 @@ const TableContentData = props => {
       if (props.searchColumn && props.searchColumn.indexOf(keys.field) >= 0) {
         if (props.searchData) {
           var regex = new RegExp(props.searchData, "gi");
+          /**
+          var totalList = value.match(regex);
+          if (totalList) {
+            totalList.map(val => {
+              value = value.replace(val, "<mark>" + val + "</mark>");
+            });
+            return value;
+          } else {
+            return value;
+          }
+        */
           value = value.replace(regex, "<mark>" + props.searchData + "</mark>");
           return value;
         }

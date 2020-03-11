@@ -21,7 +21,10 @@ const styles = {
 const TableData = props => {
   const { classes } = props;
   return (
-    <Paper className={classes.root}>
+    <Paper
+      className={classes.root}
+      style={{ display: props.data.length > 0 ? "block" : "none" }}
+    >
       <Table className={clsx(props.className, classes.table)} id={props.id}>
         <colgroup>
           {props.width.map((data, i) => (

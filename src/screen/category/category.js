@@ -4,6 +4,7 @@ import FormDialog from "./../../components/dialog/dialog";
 import TextField from "@material-ui/core/TextField";
 import Snackbar from "./../../components/snackbar/snackbar";
 import SearchInput from "./../../components/searchinput/searchInput";
+import EmptyData from "./../../components/emptydata/emptyData";
 import Table from "./../../components/table/table";
 import { connect } from "react-redux";
 import NumericInput from "./../../components/numericinput/numericinput";
@@ -42,6 +43,10 @@ const Category = props => {
   const [gridData, setGridData] = React.useState([]);
   const [mode, setMode] = React.useState("");
   const [gridSelectData, setSelectedGridData] = React.useState({});
+  const [emptyDataHeader, setEmptyDataHeader] = React.useState("No Data Found");
+  const [emptyDataDescription, setEmptyDataDescription] = React.useState(
+    "Please add new Catagory"
+  );
 
   function onCancelClick() {
     setOpen(false);
@@ -196,6 +201,9 @@ const Category = props => {
       .then(res => res.json())
       .then(
         data => {
+          if (data.length <= 0) {
+            setEmptyDataDescription("Please search with some other keyword.");
+          }
           props.loadCatagory(data);
         },
         error => {}
@@ -206,6 +214,11 @@ const Category = props => {
       <SearchInput
         placeholder="Search Catagory Name, Catagory Short,Commodity code"
         onChange={searchOnChange}
+      />
+      <EmptyData
+        emptyDataShow={props.catagoryData.length <= 0}
+        emptyDataHeader={emptyDataHeader}
+        emptyDataDescription={emptyDataDescription}
       />
       <Table
         id="catagory-table"
