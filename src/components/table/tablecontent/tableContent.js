@@ -89,6 +89,7 @@ const TableContentData = props => {
   };
 
   const setValue = (keys, value, index) => {
+    value = value ? value.toString() : "";
     if (keys.field === props.numberField) {
       return index + 1;
     } else {
@@ -97,7 +98,9 @@ const TableContentData = props => {
       }
       if (props.searchColumn && props.searchColumn.indexOf(keys.field) >= 0) {
         if (props.searchData) {
-          var regex = new RegExp(props.searchData, "gi");
+          var searchData = props.searchData.split(" ").join("|");
+
+          var regex = new RegExp("(?:" + searchData + ")", "gi");
           /**
           var totalList = value.match(regex);
           if (totalList) {
@@ -109,8 +112,36 @@ const TableContentData = props => {
             return value;
           }
         */
-          value = value.replace(regex, "<mark>" + props.searchData + "</mark>");
-          return value;
+          var lastIndex = 0;
+          var totalRegex = 0;
+          var dataContent = [];
+          var regexResult;
+          while ((regexResult = regex.exec(value))) {
+            totalRegex++;
+            dataContent.push(value.substring(lastIndex, regexResult.index));
+            dataContent.push(
+              value.substring(regexResult.index, regex.lastIndex)
+            );
+            lastIndex = regex.lastIndex;
+          }
+          dataContent.push(value.substring(lastIndex));
+
+          var returnResult = "";
+          var i;
+          if (dataContent.length > 1) {
+            for (var index = 0; index < totalRegex; index++) {
+              i = index * 2;
+              returnResult = returnResult + dataContent[i];
+              returnResult =
+                returnResult + "<mark>" + dataContent[i + 1] + "</mark>";
+            }
+            returnResult = returnResult + dataContent[i + 2];
+          } else {
+            returnResult = dataContent[0];
+          }
+
+          //value = value.replace(regex, "<mark>" + props.searchData + "</mark>");
+          return returnResult;
         }
       }
       return value;

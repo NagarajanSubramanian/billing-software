@@ -204,11 +204,23 @@ const Supplier = props => {
   ];
 
   const searchOnChange = event => {
-    setSearchValue(event.currentTarget.value);
+    var valueData = event.currentTarget.value
+      ? event.currentTarget.value.trim()
+      : "";
+    setSearchValue(valueData);
     fetch(BACKEND_URL + "/searchSupplierData", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ supplierName: event.currentTarget.value })
+      body: JSON.stringify({
+        supplierName: valueData,
+        searchField: [
+          "supplierName",
+          "supplierShortName",
+          "supplierCity",
+          "supplierPhoneno",
+          "supplierEmail"
+        ]
+      })
     })
       .then(res => res.json())
       .then(
@@ -238,7 +250,13 @@ const Supplier = props => {
         id="supplier-table"
         contextMenu={true}
         searchData={searchValue}
-        searchColumn={["supplierName", "supplierShortName", "supplierCity"]}
+        searchColumn={[
+          "supplierName",
+          "supplierShortName",
+          "supplierCity",
+          "supplierPhoneno",
+          "supplierEmail"
+        ]}
         handleMenuClick={handleMenuClick}
         width={["8%", "25%", "15%", "17%", "13%", "17%", "5%"]}
       />

@@ -192,11 +192,17 @@ const Category = props => {
   ];
 
   const searchOnChange = event => {
-    setSearchValue(event.currentTarget.value);
+    var searchData = event.currentTarget.value
+      ? event.currentTarget.value.trim()
+      : "";
+    setSearchValue(searchData);
     fetch(BACKEND_URL + "/searchCatgoryData", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ catagoryName: event.currentTarget.value })
+      body: JSON.stringify({
+        catagoryName: searchData,
+        searchField: ["catagoryName", "catagoryShort", "catagoryCommodityCode"]
+      })
     })
       .then(res => res.json())
       .then(
@@ -212,7 +218,7 @@ const Category = props => {
   return (
     <div>
       <SearchInput
-        placeholder="Search Catagory Name, Catagory Short,Commodity code"
+        placeholder="Search Catagory Name, Catagory Short, Commodity code"
         onChange={searchOnChange}
       />
       <EmptyData

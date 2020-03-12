@@ -20,10 +20,13 @@ const styles = makeStyles(theme => ({
   listIcon: {
     color: "red",
     minWidth: 30
+  },
+  focusVisible: {
+    color: "blue"
   }
 }));
 
-export default function ListData(props) {
+const ListData = React.forwardRef((props, ref) => {
   function checkSubItem(value, classesData, initial) {
     const marginLeft = parseInt(props.marginLeft);
     if (value.subItem && value.close) {
@@ -76,6 +79,7 @@ export default function ListData(props) {
                 { [classesData.unselected]: text.id !== props.initial },
                 { [classesData.selected]: text.id === props.initial }
               )}
+              classes={{ focusVisible: classesData.focusVisible }}
               onClick={props.clickSideMenuHandler}
             >
               {loadIcon(classesData, marginLeft, text)}
@@ -93,4 +97,6 @@ export default function ListData(props) {
       </List>
     </React.Fragment>
   );
-}
+});
+
+export default ListData;
