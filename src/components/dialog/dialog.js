@@ -34,10 +34,7 @@ const FormDialog = React.forwardRef((props, ref) => {
   return (
     <div style={{ marginLeft: 50 }}>
       <Dialog open={props.open}>
-        <DialogTitle
-          classes={{ root: style.dialogTitle }}
-          id="form-dialog-title"
-        >
+        <DialogTitle classes={{ root: style.dialogTitle }} id={props.id}>
           {props.dialogTitle}
         </DialogTitle>
         <DialogContent>{props.children}</DialogContent>

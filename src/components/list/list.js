@@ -86,6 +86,9 @@ const ListData = React.forwardRef((props, ref) => {
               <ListItemText
                 disableTypography={props.disableTypography}
                 title={text.name}
+                id={text.id}
+                key={text.id}
+                parentid={text.parentId}
                 style={props.listItemStyle}
                 className={classesData.listItemText}
                 primary={text.name}

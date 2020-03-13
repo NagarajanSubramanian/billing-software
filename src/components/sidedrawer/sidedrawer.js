@@ -165,7 +165,7 @@ function SideDrawer(props) {
     } else if (id === "supplier") {
       return <Supplier />;
     } else {
-      return <MasterInput />;
+      return <React.Fragment />;
     }
   };
   return (

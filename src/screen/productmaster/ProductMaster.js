@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { loadProductData } from "./../../redux/action/customerDetailsAction";
 import SingleSelect from "./../../components/singleselect/singleselect";
 import NumericInput from "./../../components/numericinput/numericinput";
+import MasterInput from "./../../components/masterinput/masterinput";
 
 const styles = {
   root: {
@@ -42,6 +43,7 @@ const ProductMaster = props => {
   const [mode, setMode] = React.useState("");
   const [type, setType] = React.useState("");
 
+  const catagoryRef = React.createRef();
   const productcoderef = React.createRef();
   const productnameref = React.createRef();
   const mrpRef = React.createRef();
@@ -72,6 +74,7 @@ const ProductMaster = props => {
   };
 
   const onSaveClick = () => {
+    console.log(catagoryRef);
     if (productcoderef.current.value && productnameref.current.value) {
       const newTodo = {
         product_code: productcoderef.current.value,
@@ -103,6 +106,7 @@ const ProductMaster = props => {
     setQuantityValue(event.target.value);
   }
   function handleMenuClick() {}
+  var dialogId = "poduct-add-dialog";
   return (
     <div>
       <SearchInput placeholder="Search Product Name, Brand, Cracker Type" />
@@ -122,6 +126,7 @@ const ProductMaster = props => {
       />
       <Dialog
         open={open}
+        id={dialogId}
         onCancelClick={onCancelClick}
         onSaveClick={onSaveClick}
         dialogTitle="Add New Product"
@@ -139,6 +144,12 @@ const ProductMaster = props => {
           type="text"
           inputRef={productnameref}
           fullWidth
+        />
+        <MasterInput
+          id="catagory-master-input"
+          ref={catagoryRef}
+          parentId={dialogId}
+          label="Catagory"
         />
         <SingleSelect
           label="Catagory"
