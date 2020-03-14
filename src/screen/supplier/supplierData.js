@@ -123,18 +123,30 @@ const Supplier = props => {
       .then(res => res.text())
       .then(
         data => {
-          if (data === "exist") {
-            setSnackOpen(true);
-            setSnackType("error");
-            setMessage("Catagory Name already exists.");
-            //setTimeout(() => catagoryNameRef.current.focus(), 100);
-            //catagoryNameRef.current.focus();
+          if (mode === "add") {
+            if (data === "exist") {
+              setSnackOpen(true);
+              setSnackType("error");
+              setMessage("Supplier Name already exists.");
+            } else {
+              setSnackOpen(true);
+              setSnackType("success");
+              setMessage("Supplier added successfully.");
+              setOpen(false);
+              setMode(mode);
+            }
           } else {
-            setSnackOpen(true);
-            setSnackType("success");
-            setMessage("Saved successfully.");
-            setOpen(false);
-            setMode(mode);
+            if (data === "notexist") {
+              setSnackOpen(true);
+              setSnackType("error");
+              setMessage("Supplier already deleted.");
+            } else {
+              setSnackOpen(true);
+              setSnackType("success");
+              setMessage("Supplier updated successfully.");
+              setOpen(false);
+              setMode(mode);
+            }
           }
           setConfirmationOpen(false);
         },

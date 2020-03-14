@@ -20,6 +20,48 @@ const MasterInput = React.forwardRef((props, ref) => {
 
   useOutsideAlerter();
 
+  function setBold(value) {
+    var searchData = inputRef.current.value.split(" ").join("|");
+
+    var regex = new RegExp("(?:\\b" + searchData + ")", "gi");
+    /**
+    var totalList = value.match(regex);
+    if (totalList) {
+      totalList.map(val => {
+        value = value.replace(val, "<mark>" + val + "</mark>");
+      });
+      return value;
+    } else {
+      return value;
+    }
+  */
+    var lastIndex = 0;
+    var totalRegex = 0;
+    var dataContent = [];
+    var regexResult;
+    while ((regexResult = regex.exec(value))) {
+      totalRegex++;
+      dataContent.push(value.substring(lastIndex, regexResult.index));
+      dataContent.push(value.substring(regexResult.index, regex.lastIndex));
+      lastIndex = regex.lastIndex;
+    }
+    dataContent.push(value.substring(lastIndex));
+
+    var returnResult = "";
+    var i;
+    if (dataContent.length > 1) {
+      for (var index = 0; index < totalRegex; index++) {
+        i = index * 2;
+        returnResult = returnResult + dataContent[i];
+        returnResult = returnResult + "<b>" + dataContent[i + 1] + "</b>";
+      }
+      returnResult = returnResult + dataContent[i + 2];
+    } else {
+      returnResult = dataContent[0];
+    }
+    return returnResult;
+  }
+
   function useOutsideAlerter() {
     /**
      * Alert if clicked on outside of element
@@ -67,35 +109,42 @@ const MasterInput = React.forwardRef((props, ref) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        catagoryName: currentTarget.value,
-        searchField: ["catagoryName", "catagoryShort", "catagoryCommodityCode"],
+        searchValue: currentTarget.value,
         offset: 0,
-        size: 5
+        size: 5,
+        masterId: props.masterId,
+        checkCount: "true"
       })
     })
       .then(res => res.json())
       .then(
         data => {
-          var count = Math.ceil(data.count / 5);
-          var rect = currentTarget.getBoundingClientRect();
-          var render = document.getElementById(renderId);
-          var parentId = document.getElementById(props.parentId);
-          render.style.position = "absolute";
-          if (parentId) {
-            var clientRect = parentId.getBoundingClientRect();
-            render.style.left = rect.x - parentId.x + "px";
-            render.style.top = rect.height + rect.y - parentId.y + "px";
-          } else {
-            render.style.left = rect.x + "px";
-            render.style.top = rect.height + rect.y + "px";
+          if (data.value) {
+            var count = Math.ceil(data.count / 5);
+            var rect = currentTarget.getBoundingClientRect();
+            var render = document.getElementById(renderId);
+            var parentId = document.getElementById(props.parentId);
+            render.style.position = "absolute";
+            if (parentId) {
+              var clientRect = parentId.getBoundingClientRect();
+              render.style.left = rect.x - parentId.x + "px";
+              render.style.top = rect.height + rect.y - parentId.y + "px";
+            } else {
+              render.style.left = rect.x + "px";
+              render.style.top = rect.height + rect.y + "px";
+            }
+            render.style.width = rect.width + "px";
+            //data.value.map(value => {
+            //  value.name = setBold(value.name);
+            //});
+            //render.style.top = "-2px";
+            setTotalPage(count > 0 ? count : 1);
+            setCurrentPage(1);
+            setMenuData(data.value);
+            setSelectedId("");
+            setSelectIndex(-1);
+            render.style.display = "block";
           }
-          render.style.width = rect.width + "px";
-          //render.style.top = "-2px";
-          setTotalPage(count > 0 ? count : 1);
-          setCurrentPage(1);
-          setMenuData(data.value);
-          setSelectIndex(-1);
-          render.style.display = "block";
         },
         error => {}
       );
@@ -143,10 +192,13 @@ const MasterInput = React.forwardRef((props, ref) => {
       }
     } else if (event.which === 13) {
       if (selectedIndex >= 0) {
-        inputRef.current.value = menuData[selectedIndex].name;
+        inputRef.current.value = menuData[selectedIndex].setText.toString();
         mainRef.current.setAttribute("keyId", menuData[selectedIndex].id);
-        mainRef.current.setAttribute("keyValue", menuData[selectedIndex].name);
-        setDefaultValue(menuData[selectedIndex].name);
+        mainRef.current.setAttribute(
+          "keyValue",
+          menuData[selectedIndex].setText
+        );
+        setDefaultValue(menuData[selectedIndex].setText);
         document.getElementById(renderId).style.display = "none";
         inputRef.current.focus();
       }
@@ -156,10 +208,10 @@ const MasterInput = React.forwardRef((props, ref) => {
   function onClickHandler(event) {
     var data = menuData.filter(value => value.id === event.target.id);
     if (data.length > 0) {
-      var value = data[0].name;
-      inputRef.current.value = value;
-      mainRef.current.setAttribute("keyId", data.id);
-      mainRef.current.setAttribute("keyValue", data.name);
+      var value = data[0].setText;
+      inputRef.current.value = value.toString();
+      mainRef.current.setAttribute("keyId", data[0].id);
+      mainRef.current.setAttribute("keyValue", data[0].setText);
       setDefaultValue(value);
       document.getElementById(renderId).style.display = "none";
       inputRef.current.focus();
@@ -172,10 +224,10 @@ const MasterInput = React.forwardRef((props, ref) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        catagoryName: "",
-        searchField: ["catagoryName", "catagoryShort", "catagoryCommodityCode"],
+        searchValue: inputRef.current.value,
         offset: offset,
-        size: 5
+        size: 5,
+        masterId: props.masterId
       })
     })
       .then(res => res.json())
@@ -208,7 +260,6 @@ const MasterInput = React.forwardRef((props, ref) => {
   }
 
   function onFocusOut() {
-    //setTimeout(() => {
     if (
       (mainRef.current &&
         mainRef.current.attributes.keyId &&
@@ -217,16 +268,12 @@ const MasterInput = React.forwardRef((props, ref) => {
       !inputRef.current.value
     ) {
     } else {
-      fetch(BACKEND_URL + "/searchMaster", {
+      fetch(BACKEND_URL + "/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          catagoryName: inputRef.current.value,
-          searchField: [
-            "catagoryName",
-            "catagoryShort",
-            "catagoryCommodityCode"
-          ],
+          searchValue: inputRef.current.value,
+          masterId: props.masterId,
           offset: 0,
           size: 5
         })
@@ -234,18 +281,18 @@ const MasterInput = React.forwardRef((props, ref) => {
         .then(res => res.json())
         .then(
           data => {
-            inputRef.current.focus();
-            if (data.value.length > 0) {
+            if (data.value && data.value.length > 0) {
+              inputRef.current.value = data.value[0].setText.toString();
               setSelectedId(data.value[0].id);
               mainRef.current.setAttribute("keyId", data.value[0].id);
-              mainRef.current.setAttribute("keyValue", data.value[0].name);
+              mainRef.current.setAttribute("keyValue", data.value[0].setText);
+            } else {
+              inputRef.current.value = "";
             }
           },
           error => {}
         );
-      inputRef.current.value = "";
     }
-    //}, 500);
   }
 
   function onPaperClick() {
@@ -261,7 +308,9 @@ const MasterInput = React.forwardRef((props, ref) => {
         label={props.label}
         onChange={onChange}
         inputRef={inputRef}
+        fullWidth={props.fullWidth}
         ref={mainRef}
+        autoComplete="off"
         label={props.label}
         onKeyUp={onKeyUp}
         onBlur={onFocusOut}
@@ -270,7 +319,13 @@ const MasterInput = React.forwardRef((props, ref) => {
       <Paper
         id={renderId}
         elevation={3}
-        style={{ width: "180px", height: "auto", display: "none", zIndex: 30 }}
+        style={{
+          width: "180px",
+          height: "auto",
+          display: "none",
+          zIndex: 30,
+          maxWidth: "200px"
+        }}
         onClick={onPaperClick}
       >
         <div style={{ borderBottom: "1px solid grey", minHeight: "32px" }}>

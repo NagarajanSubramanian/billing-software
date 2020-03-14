@@ -40,7 +40,6 @@ const Category = props => {
   const [message, setMessage] = React.useState("");
   const [snackType, setSnackType] = React.useState("success");
   const [currentData, setCurrentData] = React.useState({});
-  const [gridData, setGridData] = React.useState([]);
   const [mode, setMode] = React.useState("");
   const [gridSelectData, setSelectedGridData] = React.useState({});
   const [emptyDataHeader, setEmptyDataHeader] = React.useState("No Data Found");
@@ -69,10 +68,10 @@ const Category = props => {
       });
       setConfirmationOpen(true);
     } else {
+      catagoryNameRef.current.focus();
       setSnackOpen(true);
       setSnackType("error");
       setMessage("Enter all fields.");
-      setTimeout(() => catagoryNameRef.current.focus(), 100);
     }
   }
 
@@ -97,17 +96,32 @@ const Category = props => {
       .then(res => res.text())
       .then(
         data => {
-          if (data === "exist") {
-            setSnackOpen(true);
-            setSnackType("error");
-            setMessage("Catagory Name already exists.");
-            setTimeout(() => catagoryNameRef.current.focus(), 100);
+          if (mode === "add") {
+            if (data === "exist") {
+              setSnackOpen(true);
+              setSnackType("error");
+              setMessage("Catagory Name already exists.");
+              setTimeout(() => catagoryNameRef.current.focus(), 100);
+            } else {
+              setSnackOpen(true);
+              setSnackType("success");
+              setMessage("Catagory added successfully.");
+              setOpen(false);
+              setMode(mode);
+            }
           } else {
-            setSnackOpen(true);
-            setSnackType("success");
-            setMessage("Saved successfully.");
-            setOpen(false);
-            setMode(mode);
+            if (data === "notexist") {
+              setSnackOpen(true);
+              setSnackType("error");
+              setMessage("Catagory already deleted.");
+              setTimeout(() => catagoryNameRef.current.focus(), 100);
+            } else {
+              setSnackOpen(true);
+              setSnackType("success");
+              setMessage("Catagory updated successfully.");
+              setOpen(false);
+              setMode(mode);
+            }
           }
           setConfirmationOpen(false);
         },
@@ -322,7 +336,6 @@ const Category = props => {
           ref={vatRef}
           fullWidth
           label="VAT"
-          maxLength={5}
           commaSeparate={true}
           precision={2}
         />

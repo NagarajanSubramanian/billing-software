@@ -3,7 +3,7 @@ import TextField from "@material-ui/core/TextField";
 
 const NumericField = React.forwardRef((props, ref) => {
   const refs = ref;
-  var valueData = props.defaultValue.toString();
+  var valueData = props.defaultValue ? props.defaultValue.toString() : "";
   if (valueData && props.commaSeparate) {
     valueData = parseFloat(valueData).toLocaleString("en-IN");
   }
@@ -58,7 +58,6 @@ const NumericField = React.forwardRef((props, ref) => {
         fullWidth={props.fullWidth}
         style={props.style}
         label={props.label}
-        defaultValue={props.defaultValue ? props.defaultValue : ""}
         onKeyPress={handleKeyPress}
         onBlur={handleFocusOut}
         inputProps={{

@@ -94,7 +94,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SideDrawer(props) {
-  const [initial, setInitial] = React.useState("home");
+  const [initial, setInitial] = React.useState("productdetails");
   const [appName, changeAppName] = React.useState("Home");
   const classesData = useStyles();
   const [open, setOpen] = React.useState(false);

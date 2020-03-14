@@ -61,6 +61,21 @@ const ListData = React.forwardRef((props, ref) => {
 
   const marginLeft = parseInt(props.marginLeft);
   var classesData = styles();
+
+  const setListItemText = text => {
+    return (
+      <ListItemText
+        disableTypography={props.disableTypography}
+        title={text.name}
+        id={text.id}
+        key={text.id}
+        parentid={text.parentId}
+        style={props.listItemStyle}
+        className={classesData.listItemText}
+        primary={text.name}
+      />
+    );
+  };
   return (
     <React.Fragment>
       <List id={props.id}>
@@ -83,16 +98,7 @@ const ListData = React.forwardRef((props, ref) => {
               onClick={props.clickSideMenuHandler}
             >
               {loadIcon(classesData, marginLeft, text)}
-              <ListItemText
-                disableTypography={props.disableTypography}
-                title={text.name}
-                id={text.id}
-                key={text.id}
-                parentid={text.parentId}
-                style={props.listItemStyle}
-                className={classesData.listItemText}
-                primary={text.name}
-              />
+              {setListItemText(text)}
             </ListItem>
             {checkSubItem(text, classesData, props.initial)}
           </React.Fragment>

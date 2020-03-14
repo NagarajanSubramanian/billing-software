@@ -6,12 +6,14 @@ import SnackBar from "./../../components/snackbar/snackbar";
 import Table from "./../../components/table/table";
 import { withStyles } from "@material-ui/styles";
 import SearchInput from "./../../components/searchinput/searchInput";
-import axios from "axios";
 import { connect } from "react-redux";
 import { loadProductData } from "./../../redux/action/customerDetailsAction";
 import SingleSelect from "./../../components/singleselect/singleselect";
 import NumericInput from "./../../components/numericinput/numericinput";
 import MasterInput from "./../../components/masterinput/masterinput";
+import EmptyData from "./../../components/emptydata/emptyData";
+import ConfimationDialog from "./../../components/confimationdialog/confirmationDialog";
+import { BACKEND_URL } from "./../../constants/constants";
 
 const styles = {
   root: {
@@ -20,49 +22,111 @@ const styles = {
   }
 };
 
-var defaultCatagory = [{ value: "" }, { value: "1", text: "Sample" }];
-var defaultSupplier = [{ value: "" }, { value: "1", text: "supplier" }];
-
 var measurement = [
-  { value: "box", text: "1 Box" },
-  { value: "pkt", text: "1 Pkt" }
+  { value: "1", text: "1 Box" },
+  { value: "2", text: "1 Pkt" }
 ];
 var qunatity = [
-  { value: "pcs", text: "Pcs" },
-  { value: "chain", text: "Chain" }
+  { value: "1", text: "Pcs" },
+  { value: "2", text: "Chain" }
 ];
 
 const ProductMaster = props => {
-  const [catagoryValue, setCatagoryValue] = React.useState("");
-  const [supplierValue, setSupplierValue] = React.useState("");
-  const [measureValue, setMeasureValue] = React.useState("");
-  const [qunatityValue, setQuantityValue] = React.useState("");
-  const [open, setOpen] = React.useState(false);
+  const [measureValue, setMeasureValue] = React.useState("1");
+  const [qunatityValue, setQuantityValue] = React.useState("2");
+  const [open, setOpen] = React.useState(true);
   const [openSnack, setOpenSnack] = React.useState(false);
   const [messageContent, setMessageContent] = React.useState("");
   const [mode, setMode] = React.useState("");
   const [type, setType] = React.useState("");
 
+  const [confimationTitle, setConfimationTitle] = React.useState(
+    "Confirmation"
+  );
+  const [confirmationContent, setConfimationContent] = React.useState(
+    "Do you want to add record?"
+  );
+
+  const [searchValue, setSearchValue] = React.useState("");
+  const [okLabel, setOkLabel] = React.useState("YES");
+  const [cancelLabel, setCancelLabel] = React.useState("NO");
+  const [okLabelFocus, setOKLabelFocus] = React.useState(true);
+  const [cancelLabelFocus, setCancelLabelFocus] = React.useState(false);
+  const [confirmationOpen, setConfirmationOpen] = React.useState(false);
+  const [okButtonColor, setOkButtonColor] = React.useState("primary");
+  const [cancelButtonColor, setCancelButtonColor] = React.useState("primary");
+
+  const [emptyDataHeader, setEmptyDataHeader] = React.useState("No Data Found");
+  const [emptyDataDescription, setEmptyDataDescription] = React.useState(
+    "Please add new Product"
+  );
+
   const catagoryRef = React.createRef();
+  const supplierRef = React.createRef();
   const productcoderef = React.createRef();
   const productnameref = React.createRef();
   const mrpRef = React.createRef();
   const purchaseRateRef = React.createRef();
   const quantityRef = React.createRef();
 
-  const headerData = [
-    "Product Code",
-    "Product Name",
-    "Brand",
-    "Cracker Type",
-    "Amount"
-  ];
+  function handleConfirmationOk() {
+    var currentData = {};
+    currentData["productCode"] = productcoderef.current.value;
+    currentData["productName"] = productnameref.current.value;
+    currentData["catagoryId"] = catagoryRef.current.getAttribute("keyId");
+    currentData["supplierId"] = supplierRef.current.getAttribute("keyId");
+    currentData["productMrp"] = mrpRef.current.value;
+    currentData["productPurchaseRate"] = purchaseRateRef.current.value;
+    currentData["productMeasurementId"] = measureValue;
+    currentData["productQuantity"] = quantityRef.current.value;
+    currentData["productQuantityScale"] = qunatityValue;
 
-  const data = [];
+    currentData["mode"] = mode;
+    fetch(BACKEND_URL + "/insertProduct", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(currentData)
+    })
+      .then(res => res.text())
+      .then(
+        data => {
+          if (mode === "add") {
+            if (data === "exist") {
+              setMessageContent("Product Code or Name already exists.");
+              setType("error");
+              setOpenSnack(true);
+            } else {
+              setOpenSnack(true);
+              setType("success");
+              setMessageContent("Product added successfully.");
+              setOpen(false);
+            }
+          } else {
+            if (data === "exist") {
+              setMessageContent("Product already deleted.");
+              setType("error");
+              setOpenSnack(true);
+            } else {
+              setOpenSnack(true);
+              setType("success");
+              setMessageContent("Product updated successfully.");
+              setOpen(false);
+            }
+          }
+          setConfirmationOpen(false);
+        },
+        error => {}
+      );
+  }
+
+  function handleConfirmationClose() {
+    setConfirmationOpen(false);
+    productcoderef.current.focus();
+  }
 
   const onAddClick = () => {
-    setOpen(true);
     setMode("add");
+    setOpen(true);
   };
 
   const onCancelClick = () => {
@@ -74,30 +138,26 @@ const ProductMaster = props => {
   };
 
   const onSaveClick = () => {
-    console.log(catagoryRef);
-    if (productcoderef.current.value && productnameref.current.value) {
-      const newTodo = {
-        product_code: productcoderef.current.value,
-        product_name: productnameref.current.value
-      };
-
-      setMessageContent("Data Added Successfully");
-      setType("success");
-      setOpen(false);
+    if (
+      productcoderef.current.value &&
+      productnameref.current.value &&
+      mrpRef.current.value &&
+      purchaseRateRef.current.value &&
+      quantityRef.current.value &&
+      catagoryRef.current.getAttribute("keyId") &&
+      supplierRef.current.getAttribute("keyId") &&
+      measureValue &&
+      qunatityValue
+    ) {
+      setConfirmationOpen(true);
     } else {
-      setMessageContent("Please Enter All the Fields");
+      productcoderef.current.focus();
+
+      setOpenSnack(true);
       setType("error");
+      setMessageContent("Enter all fields.");
     }
-
-    setOpenSnack(true);
   };
-
-  function handleCatagoryChange(event) {
-    setCatagoryValue(event.target.value);
-  }
-  function handleSupplierChange(event) {
-    setSupplierValue(event.target.value);
-  }
 
   function handleMeasurmentChange(event) {
     setMeasureValue(event.target.value);
@@ -105,24 +165,91 @@ const ProductMaster = props => {
   function handleQunatityChange(event) {
     setQuantityValue(event.target.value);
   }
+
+  var headerProperty = [
+    {
+      filed: "no",
+      visible: true,
+      headerName: "No",
+      align: "center",
+      headerAlign: "center",
+      type: "number",
+      commaSeparate: false
+    },
+    {
+      field: "productCode",
+      visible: true,
+      headerName: "Product Code",
+      align: "left",
+      headerAlign: "center",
+      type: "string",
+      commaSeparate: false
+    },
+    {
+      field: "productName",
+      visible: true,
+      headerName: "Product Name",
+      align: "left",
+      headerAlign: "center",
+      type: "string",
+      commaSeparate: false
+    },
+    {
+      field: "catagoryId",
+      visible: true,
+      headerName: "Catagory",
+      align: "left",
+      headerAlign: "center",
+      type: "string",
+      commaSeparate: false
+    },
+    {
+      field: "supplierId",
+      visible: true,
+      headerName: "Supplier",
+      align: "left",
+      headerAlign: "center",
+      type: "string",
+      commaSeparate: false
+    },
+    {
+      field: "productMrp",
+      visible: true,
+      headerName: "MRP",
+      align: "center",
+      headerAlign: "center",
+      type: "number",
+      commaSeparate: true
+    }
+  ];
+
   function handleMenuClick() {}
   var dialogId = "poduct-add-dialog";
   return (
     <div>
       <SearchInput placeholder="Search Product Name, Brand, Cracker Type" />
+      <EmptyData
+        emptyDataShow={true}
+        emptyDataHeader={emptyDataHeader}
+        emptyDataDescription={emptyDataDescription}
+      />
       <Fab id="productmaster-add" onClick={onAddClick} />
       <Table
-        header={[
-          "Product Code",
-          "Product Name",
-          "Catagory",
-          "Supplier",
-          "MRP",
-          ""
+        id="catagory-table"
+        header={headerProperty}
+        fieldId="catagoryId"
+        numberFiled="no"
+        searchData={searchValue}
+        searchColumn={[
+          "productCode",
+          "productName",
+          "catagoryName",
+          "supplierName"
         ]}
         data={[]}
-        handleMenuClick={handleMenuClick}
-        width={["15%", "25%", "20%", "20%", "15%", "5%"]}
+        contextMenu={true}
+        handleMenuClick={data => handleMenuClick(data)}
+        width={["8%", "13%", "25%", "18%", "18%", "14%", "5%"]}
       />
       <Dialog
         open={open}
@@ -142,6 +269,7 @@ const ProductMaster = props => {
         <TextField
           label="Product Name"
           type="text"
+          autoFocus={mode === "edit"}
           inputRef={productnameref}
           fullWidth
         />
@@ -149,21 +277,17 @@ const ProductMaster = props => {
           id="catagory-master-input"
           ref={catagoryRef}
           parentId={dialogId}
+          fullWidth
           label="Catagory"
+          masterId="catagory_name_master"
         />
-        <SingleSelect
-          label="Catagory"
-          values={defaultCatagory}
-          defaultValue={catagoryValue}
-          id="catagory-code"
-          handleChange={handleCatagoryChange}
-        />
-        <SingleSelect
+        <MasterInput
+          id="supplier-master-input"
+          ref={supplierRef}
+          parentId={dialogId}
+          fullWidth
           label="Supplier"
-          values={defaultSupplier}
-          defaultValue={supplierValue}
-          id="supplier-code"
-          handleChange={handleSupplierChange}
+          masterId="supplier_name_master"
         />
         <NumericInput
           defaultValue={mode === "add" ? "" : ""}
@@ -172,6 +296,7 @@ const ProductMaster = props => {
           ref={mrpRef}
           fullWidth
           label="MRP"
+          commaSeparate={true}
           precision={2}
         />
         <NumericInput
@@ -181,6 +306,7 @@ const ProductMaster = props => {
           ref={purchaseRateRef}
           fullWidth
           label="Purcahse Rate"
+          commaSeparate={true}
           precision={2}
         />
         <SingleSelect
@@ -214,6 +340,20 @@ const ProductMaster = props => {
         autoHideDuration={3000}
         type={type}
         handleClose={handleClose}
+      />
+      <ConfimationDialog
+        id="product-add-confiramtion"
+        dialogTitle={confimationTitle}
+        dialogContent={confirmationContent}
+        okLabel={okLabel}
+        cancelLabel={cancelLabel}
+        okButtonColor={okButtonColor}
+        cancelButtonColor={cancelButtonColor}
+        okLabelFocus={okLabelFocus}
+        cancelLabelFocus={cancelLabelFocus}
+        open={confirmationOpen}
+        handleOk={handleConfirmationOk}
+        handleClose={handleConfirmationClose}
       />
     </div>
   );
