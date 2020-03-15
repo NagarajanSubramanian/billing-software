@@ -40,6 +40,18 @@ const useStyle = makeStyles(theme => ({
 }));
 
 const SearchInput = props => {
+  var inputRef = React.createRef();
+  const [closeShow, setCloseShow] = React.useState(false);
+
+  function onChange(event) {
+    if (event.currentTarget.value.length > 0) {
+      setCloseShow(true);
+    } else {
+      setCloseShow(false);
+    }
+    props.onChange(event);
+  }
+
   const style = useStyle();
   return (
     <ThemeProvider theme={theme}>
@@ -47,15 +59,23 @@ const SearchInput = props => {
         placeholder={props.placeholder}
         variant="outlined"
         fullWidth
-        onChange={props.onChange}
+        ref={inputRef}
+        onChange={onChange}
         InputProps={{
           startAdornment: (
-            <InputAdornment position="start">
+            <InputAdornment position="start" style={{ cursor: "default" }}>
               <SearchIcon />
             </InputAdornment>
           ),
           endAdornment: (
-            <InputAdornment position="start">
+            <InputAdornment
+              position="start"
+              style={{
+                cursor: "pointer",
+                marginTop: "4px",
+                display: closeShow ? "table" : "none"
+              }}
+            >
               <CloseIcon />
             </InputAdornment>
           ),

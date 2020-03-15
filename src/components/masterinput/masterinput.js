@@ -10,7 +10,7 @@ const MasterInput = React.forwardRef((props, ref) => {
   var renderId = props.id + "-render";
   var [selectedIndex, setSelectIndex] = React.useState(-1);
   var [selectedId, setSelectedId] = React.useState("");
-  var [defaultValue, setDefaultValue] = React.useState("");
+  var [defaultValue, setDefaultValue] = React.useState(props.defaultValue);
   var [currentPage, setCurrentPage] = React.useState(1);
   var [totalPage, setTotalPage] = React.useState(2);
   var inputRef = React.createRef();
@@ -90,6 +90,11 @@ const MasterInput = React.forwardRef((props, ref) => {
     }
 
     React.useEffect(() => {
+      console.log(mainRef);
+      if (props.keyId) {
+        mainRef.current.setAttribute("keyid", props.keyId);
+        mainRef.current.setAttribute("keyvalue", props.keyName);
+      }
       // Bind the event listener
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
@@ -102,8 +107,8 @@ const MasterInput = React.forwardRef((props, ref) => {
   function onChange(event) {
     var currentTarget = event.currentTarget;
     inputRef.current.focus();
-    mainRef.current.removeAttribute("keyId");
-    mainRef.current.removeAttribute("keyValue");
+    mainRef.current.removeAttribute("keyid");
+    mainRef.current.removeAttribute("keyvalue");
     event.persist();
     fetch(BACKEND_URL + "/searchMaster", {
       method: "POST",
@@ -193,9 +198,9 @@ const MasterInput = React.forwardRef((props, ref) => {
     } else if (event.which === 13) {
       if (selectedIndex >= 0) {
         inputRef.current.value = menuData[selectedIndex].setText.toString();
-        mainRef.current.setAttribute("keyId", menuData[selectedIndex].id);
+        mainRef.current.setAttribute("keyid", menuData[selectedIndex].id);
         mainRef.current.setAttribute(
-          "keyValue",
+          "keyvalue",
           menuData[selectedIndex].setText
         );
         setDefaultValue(menuData[selectedIndex].setText);
@@ -210,8 +215,8 @@ const MasterInput = React.forwardRef((props, ref) => {
     if (data.length > 0) {
       var value = data[0].setText;
       inputRef.current.value = value.toString();
-      mainRef.current.setAttribute("keyId", data[0].id);
-      mainRef.current.setAttribute("keyValue", data[0].setText);
+      mainRef.current.setAttribute("keyid", data[0].id);
+      mainRef.current.setAttribute("keyvalue", data[0].setText);
       setDefaultValue(value);
       document.getElementById(renderId).style.display = "none";
       inputRef.current.focus();
@@ -262,8 +267,8 @@ const MasterInput = React.forwardRef((props, ref) => {
   function onFocusOut() {
     if (
       (mainRef.current &&
-        mainRef.current.attributes.keyId &&
-        mainRef.current.attributes.keyId.value) ||
+        mainRef.current.attributes.keyid &&
+        mainRef.current.attributes.keyid.value) ||
       onClickFlag ||
       !inputRef.current.value
     ) {
@@ -284,8 +289,8 @@ const MasterInput = React.forwardRef((props, ref) => {
             if (data.value && data.value.length > 0) {
               inputRef.current.value = data.value[0].setText.toString();
               setSelectedId(data.value[0].id);
-              mainRef.current.setAttribute("keyId", data.value[0].id);
-              mainRef.current.setAttribute("keyValue", data.value[0].setText);
+              mainRef.current.setAttribute("keyid", data.value[0].id);
+              mainRef.current.setAttribute("keyvalue", data.value[0].setText);
             } else {
               inputRef.current.value = "";
             }
@@ -307,6 +312,7 @@ const MasterInput = React.forwardRef((props, ref) => {
         style={props.style}
         label={props.label}
         onChange={onChange}
+        disabled={props.disabled}
         inputRef={inputRef}
         fullWidth={props.fullWidth}
         ref={mainRef}

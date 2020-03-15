@@ -7,7 +7,8 @@ import { BACKEND_URL } from "./constants/constants";
 
 import {
   loadCatagory,
-  loadSupplier
+  loadSupplier,
+  loadProduct
 } from "./../src/redux/action/crackerAction";
 
 import { connect } from "react-redux";
@@ -31,6 +32,7 @@ class App extends React.Component {
           self.setState({ screenFlag: "completed" });
           self.props.loadCatagory(result.catagory);
           self.props.loadSupplier(result.supplier);
+          self.props.loadProduct(result.product);
         },
         error => {
           self.setState({ screenFlag: "error" });
@@ -59,7 +61,8 @@ class App extends React.Component {
 const mapDispatchToProps = dispatch => {
   return {
     loadCatagory: catagoryData => dispatch(loadCatagory(catagoryData)),
-    loadSupplier: supplierData => dispatch(loadSupplier(supplierData))
+    loadSupplier: supplierData => dispatch(loadSupplier(supplierData)),
+    loadProduct: productData => dispatch(loadProduct(productData))
   };
 };
 

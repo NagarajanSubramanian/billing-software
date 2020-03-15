@@ -23,12 +23,12 @@ const tinRef = React.createRef();
 const cstRef = React.createRef();
 const panRef = React.createRef();
 const Supplier = props => {
+  const [dialogTitle, setDialogTitle] = React.useState("");
   const [searchValue, setSearchValue] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [snackopen, setSnackOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [snackType, setSnackType] = React.useState("success");
-  const [gridData, setGridData] = React.useState([]);
   const [supplierId, setSupplierId] = React.useState("");
   const [mode, setMode] = React.useState("");
   const [gridSelectData, setSelectedGridData] = React.useState({});
@@ -54,6 +54,7 @@ const Supplier = props => {
   function openAddDialog() {
     setOpen(true);
     setMode("add");
+    setDialogTitle("Add Supplier");
     setSupplierId("");
   }
 
@@ -75,6 +76,9 @@ const Supplier = props => {
       setSelectedGridData(value[0]);
       setOpen(true);
       if (data.menuId === "view") {
+        setDialogTitle("View Supplier");
+      } else {
+        setDialogTitle("Edit Supplier");
       }
     }
   }
@@ -90,12 +94,17 @@ const Supplier = props => {
       tinRef.current.value &&
       cstRef.current.value
     ) {
+      if (mode === "add") {
+        setConfimationContent("Do you want to add supplier?");
+      } else {
+        setConfimationContent("Do you want to update supplier?");
+      }
       setConfirmationOpen(true);
     } else {
+      supplierNameRef.current.focus();
       setSnackOpen(true);
       setSnackType("error");
       setMessage("Enter all fields.");
-      setTimeout(() => supplierNameRef.current.focus(), 0);
     }
   }
 
@@ -115,20 +124,29 @@ const Supplier = props => {
     currentData["supplierTin"] = tinRef.current.value;
     currentData["supplierCst"] = cstRef.current.value;
     currentData["supplierPan"] = panRef.current.value;
+    currentData["searchValue"] = searchValue;
+    currentData["searchField"] = [
+      "supplierName",
+      "supplierShortName",
+      "supplierCity",
+      "supplierPhoneno",
+      "supplierEmail"
+    ];
     fetch(BACKEND_URL + "/insertSupplier", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(currentData)
     })
-      .then(res => res.text())
+      .then(res => res.json())
       .then(
         data => {
           if (mode === "add") {
-            if (data === "exist") {
+            if (data["status"] === "exist") {
               setSnackOpen(true);
               setSnackType("error");
               setMessage("Supplier Name already exists.");
             } else {
+              props.loadSupplier(data["supplier"]);
               setSnackOpen(true);
               setSnackType("success");
               setMessage("Supplier added successfully.");
@@ -136,11 +154,12 @@ const Supplier = props => {
               setMode(mode);
             }
           } else {
-            if (data === "notexist") {
+            if (data["status"] === "notexist") {
               setSnackOpen(true);
               setSnackType("error");
               setMessage("Supplier already deleted.");
             } else {
+              props.loadSupplier(data["supplier"]);
               setSnackOpen(true);
               setSnackType("success");
               setMessage("Supplier updated successfully.");

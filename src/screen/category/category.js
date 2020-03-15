@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import Fab from "./../../components/fab/Fab";
 import FormDialog from "./../../components/dialog/dialog";
 import TextField from "@material-ui/core/TextField";
@@ -17,9 +18,10 @@ const shortRef = React.createRef();
 const commodityRef = React.createRef();
 const cstRef = React.createRef();
 const vatRef = React.createRef();
-const cancelButtonRef = React.createRef();
 
+const cancelButtonRef = React.createRef();
 const Category = props => {
+  const [dialogTitle, setDialogTitle] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [catagoryId, setCatagoryId] = React.useState("");
   const [confimationTitle, setConfimationTitle] = React.useState(
@@ -66,6 +68,11 @@ const Category = props => {
         catagoryCst: cstRef.current.value.replace(/,/g, ""),
         catagoryVat: vatRef.current.value.replace(/,/g, "")
       });
+      if (mode === "add") {
+        setConfimationContent("Do you want to add catagory?");
+      } else {
+        setConfimationContent("Do you want to update catagory?");
+      }
       setConfirmationOpen(true);
     } else {
       catagoryNameRef.current.focus();
@@ -80,6 +87,7 @@ const Category = props => {
   }
   function openAddDialog() {
     setCatagoryId("");
+    setDialogTitle("Add Catagory");
     setOpen(true);
     setMode("add");
   }
@@ -88,36 +96,44 @@ const Category = props => {
       currentData["catagoryId"] = catagoryId;
     }
     currentData["mode"] = mode;
+    currentData["searchValue"] = searchValue;
+    currentData["searchField"] = [
+      "catagoryName",
+      "catagoryShort",
+      "catagoryCommodityCode"
+    ];
     fetch(BACKEND_URL + "/insertCatagory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(currentData)
     })
-      .then(res => res.text())
+      .then(res => res.json())
       .then(
         data => {
           if (mode === "add") {
-            if (data === "exist") {
+            if (data["status"] === "exist") {
+              catagoryNameRef.current.focus();
               setSnackOpen(true);
               setSnackType("error");
               setMessage("Catagory Name already exists.");
-              setTimeout(() => catagoryNameRef.current.focus(), 100);
             } else {
               setSnackOpen(true);
               setSnackType("success");
+              props.loadCatagory(data["catagory"]);
               setMessage("Catagory added successfully.");
               setOpen(false);
               setMode(mode);
             }
           } else {
-            if (data === "notexist") {
+            if (data["status"] === "notexist") {
+              catagoryNameRef.current.focus();
               setSnackOpen(true);
               setSnackType("error");
               setMessage("Catagory already deleted.");
-              setTimeout(() => catagoryNameRef.current.focus(), 100);
             } else {
               setSnackOpen(true);
               setSnackType("success");
+              props.loadCatagory(data["catagory"]);
               setMessage("Catagory updated successfully.");
               setOpen(false);
               setMode(mode);
@@ -129,22 +145,31 @@ const Category = props => {
       );
   }
   function handleConfirmationClose() {
-    setConfirmationOpen(false);
     catagoryNameRef.current.focus();
+    setConfirmationOpen(false);
   }
   const handleMenuClick = data => {
     var value = props.catagoryData.filter(
       value => value.catagoryId === data.id
     );
+    console.log(ReactDOM.findDOMNode(cancelButtonRef.current));
     setCatagoryId(data.id);
     if (value.length > 0) {
+      if (data.menuId === "view") {
+        setDialogTitle("View Catagory");
+        setTimeout(() => {
+          ReactDOM.findDOMNode(cancelButtonRef.current).focus();
+          cancelButtonRef.current.className =
+            cancelButtonRef.current.className + " Mui-focusVisible";
+          cancelButtonRef.current.focus();
+        }, 1000);
+      } else {
+        setDialogTitle("Edit Catagory");
+      }
       setSelectedGridData(value[0]);
       setCurrentData(value[0]);
-      setOpen(true);
       setMode(data.menuId);
-      if (data.menuId === "view") {
-        setTimeout(() => cancelButtonRef.current.focus(), 100);
-      }
+      setOpen(true);
     }
   };
 
@@ -253,7 +278,7 @@ const Category = props => {
         ]}
         data={props.catagoryData}
         contextMenu={true}
-        handleMenuClick={data => handleMenuClick(data)}
+        handleMenuClick={handleMenuClick}
         width={["8%", "27%", "15%", "15%", "15%", "15%", "5%"]}
       />
       <Fab
@@ -267,7 +292,7 @@ const Category = props => {
         open={open}
         onCancelClick={() => onCancelClick()}
         onSaveClick={data => onSaveClick(data)}
-        dialogTitle="Add Catagory"
+        dialogTitle={dialogTitle}
       >
         <TextField
           autoFocus={mode === "add" || mode === "edit"}

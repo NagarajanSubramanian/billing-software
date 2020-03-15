@@ -29,19 +29,19 @@ const values = [
     icon: "apps",
     close: false,
     subItem: [
-      { parentId: "view", id: "catagory", name: "Catagory", icon: "home" },
-      { parentId: "view", id: "supplier", name: "Supplier", icon: "home" },
-      {
-        parentId: "view",
-        id: "customerdetails",
-        name: "Customer Details",
-        icon: "people"
-      },
+      { parentId: "view", id: "catagory", name: "Catagory", icon: "storage" },
+      { parentId: "view", id: "supplier", name: "Supplier", icon: "account" },
+      // {
+      //  parentId: "view",
+      //  id: "customerdetails",
+      // name: "Customer Details",
+      // icon: "people"
+      //},
       {
         parentId: "view",
         id: "productdetails",
         name: "Product Details",
-        icon: "apps"
+        icon: "list"
       }
     ]
   }
@@ -94,7 +94,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SideDrawer(props) {
-  const [initial, setInitial] = React.useState("productdetails");
+  const [initial, setInitial] = React.useState("home");
   const [appName, changeAppName] = React.useState("Home");
   const classesData = useStyles();
   const [open, setOpen] = React.useState(false);
