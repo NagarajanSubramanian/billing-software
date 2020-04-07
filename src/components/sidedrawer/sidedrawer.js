@@ -15,10 +15,14 @@ import Category from "./../../screen/category/category";
 import Supplier from "./../../screen/supplier/supplierData";
 import ListData from "./../list/list";
 import { APP_BAR_COLOR } from "./../../constants/constants";
-import MasterInput from "./../masterinput/masterinput";
+import MasterInput from "./../masterinput/masterinputnew";
+import SearchInput from "./../searchinput/searchInput";
+import BillingTable from "./../../screen/billing/billing";
+import Grid from "./../../components/grid/grid";
+import TextField from "./../textfield/textfield";
 
 const drawerWidth = 240;
-const backgroundColor = APP_BAR_COLOR;
+const backgroundColor = "var(--app-bar-color)";
 
 const values = [
   {
@@ -41,56 +45,56 @@ const values = [
         parentId: "view",
         id: "productdetails",
         name: "Product Details",
-        icon: "list"
-      }
-    ]
-  }
+        icon: "list",
+      },
+    ],
+  },
 ];
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   appBar: {
     transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
   backDropZIndex: {
-    zIndex: 30
+    zIndex: 30,
   },
   drawerHome: {
     marginTop: "8px",
     marginLeft: "12px",
-    cursor: "pointer"
+    cursor: "pointer",
   },
   drawerMenuIcon: {
     padding: "0px",
     marginLeft: "8px",
-    color: "inherit"
+    color: "inherit",
   },
   appBarColor: {
     backgroundColor: backgroundColor,
     height: "48px",
-    boxShadow: "none"
+    boxShadow: "none",
   },
   toolbarHeight: {
-    minHeight: "48px"
+    minHeight: "48px",
   },
   drawerPaper: {
-    width: drawerWidth
+    width: drawerWidth,
   },
   menuButton: {
-    marginRight: 8
+    marginRight: 8,
   },
   drawerBorder: {
-    borderRight: "0px"
+    borderRight: "0px",
   },
   drawerHeader: {
     display: "flex",
     padding: "0 8px",
     minHeight: "48px !important",
     backgroundColor: backgroundColor,
-    color: "white"
-  }
+    color: "white",
+  },
 }));
 
 function SideDrawer(props) {
@@ -99,23 +103,26 @@ function SideDrawer(props) {
   const classesData = useStyles();
   const [open, setOpen] = React.useState(false);
   const [listValues, setListValues] = React.useState(values);
+  const masterRef = React.createRef();
 
   const handleDrawerOpen = () => {
     setOpen(true);
+    document.body.classList.add("scrollhidden");
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+    document.body.classList.remove("scrollhidden");
   };
-  const checkOpenCloseList = evnt => {
+  const checkOpenCloseList = (evnt) => {
     const parntId = evnt.currentTarget.attributes.parentid.value;
     var dataValue = {};
     var listData = Object.assign([], listValues);
     var subItem = [];
-    listData.map(data => {
+    listData.map((data) => {
       if (data.id === parntId && data.subItem) {
         subItem = data.subItem.filter(
-          value => value.id === evnt.currentTarget.id
+          (value) => value.id === evnt.currentTarget.id
         );
         if (subItem.length === 0) {
           data.close = !data.close;
@@ -129,7 +136,7 @@ function SideDrawer(props) {
     setListValues(listData);
   };
 
-  const clickSideMenuHandler = event => {
+  const clickSideMenuHandler = (event) => {
     checkOpenCloseList(event);
     const targetId = event.currentTarget.id;
     if (targetId === "catagory") {
@@ -155,7 +162,7 @@ function SideDrawer(props) {
     handleDrawerClose();
   }
 
-  const setScreenVisible = id => {
+  const setScreenVisible = (id) => {
     if (id === "catagory") {
       return <Category />;
     } else if (id === "customerdetails") {
@@ -165,7 +172,54 @@ function SideDrawer(props) {
     } else if (id === "supplier") {
       return <Supplier />;
     } else {
-      return <React.Fragment />;
+      return (
+        <Grid
+          width="90%"
+          height="50%"
+          headerHeight={40}
+          rowHeight={35}
+          enterToNextCell={true}
+          editable={true}
+          columns={[
+            {
+              id: "id1",
+              field: "id1",
+              editable: true,
+              width: "10%",
+              headerName: "Data",
+              headerBold: true,
+              headerHorizontalAlign: "center",
+              headerVerticalAlign: "middle",
+              horizontalAlign: "right",
+              editable: true,
+              type: "number",
+            },
+            {
+              id: "id2",
+              field: "id2",
+              editable: true,
+              width: "20%",
+              headerBold: true,
+              headerName: "Sample1234567890056ry56",
+              type: "text",
+            },
+            {
+              id: "id3",
+              field: "id3",
+              editable: true,
+              width: "40%",
+              headerBold: true,
+              headerName: "Sample1234567890056",
+            },
+          ]}
+          data={[
+            { id1: "123", id2: "value2" },
+            { id1: "123", id2: "value3" },
+          ]}
+        />
+      );
+
+      //return <TextField length={500} ref={masterRef} id="sample-check" />;
     }
   };
   return (
@@ -195,7 +249,7 @@ function SideDrawer(props) {
         open={open}
         classes={{
           paper: classesData.drawerPaper,
-          paperAnchorDockedLeft: classesData.drawerBorder
+          paperAnchorDockedLeft: classesData.drawerBorder,
         }}
       >
         <div className={classesData.drawerHeader}>
@@ -224,7 +278,9 @@ function SideDrawer(props) {
           clickSideMenuHandler={clickSideMenuHandler}
         />
       </Drawer>
-      <main style={{ marginTop: "48px" }}>{setScreenVisible(initial)}</main>
+      <main style={{ marginTop: "48px", height: "calc(100vh - 48px)" }}>
+        {setScreenVisible(initial)}
+      </main>
 
       <Backdrop
         className={classesData.backDropZIndex}

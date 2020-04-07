@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Fab from "./../../components/fab/Fab";
 import FormDialog from "./../../components/dialog/dialog";
-import TextField from "@material-ui/core/TextField";
+import TextField from "./../../components/textfield/textfield";
 import Snackbar from "./../../components/snackbar/snackbar";
 import SearchInput from "./../../components/searchinput/searchInput";
 import EmptyData from "./../../components/emptydata/emptyData";
@@ -20,7 +20,7 @@ const cstRef = React.createRef();
 const vatRef = React.createRef();
 
 const cancelButtonRef = React.createRef();
-const Category = props => {
+const Category = (props) => {
   const [dialogTitle, setDialogTitle] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [catagoryId, setCatagoryId] = React.useState("");
@@ -66,7 +66,7 @@ const Category = props => {
         catagoryShort: shortRef.current.value.replace(/,/g, ""),
         catagoryCommodityCode: commodityRef.current.value,
         catagoryCst: cstRef.current.value.replace(/,/g, ""),
-        catagoryVat: vatRef.current.value.replace(/,/g, "")
+        catagoryVat: vatRef.current.value.replace(/,/g, ""),
       });
       if (mode === "add") {
         setConfimationContent("Do you want to add catagory?");
@@ -100,16 +100,16 @@ const Category = props => {
     currentData["searchField"] = [
       "catagoryName",
       "catagoryShort",
-      "catagoryCommodityCode"
+      "catagoryCommodityCode",
     ];
     fetch(BACKEND_URL + "/insertCatagory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentData)
+      body: JSON.stringify(currentData),
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => {
+        (data) => {
           if (mode === "add") {
             if (data["status"] === "exist") {
               catagoryNameRef.current.focus();
@@ -141,16 +141,16 @@ const Category = props => {
           }
           setConfirmationOpen(false);
         },
-        error => {}
+        (error) => {}
       );
   }
   function handleConfirmationClose() {
     catagoryNameRef.current.focus();
     setConfirmationOpen(false);
   }
-  const handleMenuClick = data => {
+  const handleMenuClick = (data) => {
     var value = props.catagoryData.filter(
-      value => value.catagoryId === data.id
+      (value) => value.catagoryId === data.id
     );
     console.log(ReactDOM.findDOMNode(cancelButtonRef.current));
     setCatagoryId(data.id);
@@ -181,7 +181,7 @@ const Category = props => {
       align: "center",
       headerAlign: "center",
       type: "number",
-      commaSeparate: false
+      commaSeparate: false,
     },
     {
       field: "catagoryName",
@@ -190,7 +190,7 @@ const Category = props => {
       align: "left",
       headerAlign: "center",
       type: "string",
-      commaSeparate: false
+      commaSeparate: false,
     },
     {
       field: "catagoryShort",
@@ -199,7 +199,7 @@ const Category = props => {
       align: "center",
       headerAlign: "center",
       type: "number",
-      commaSeparate: true
+      commaSeparate: true,
     },
     {
       field: "catagoryCommodityCode",
@@ -208,7 +208,7 @@ const Category = props => {
       align: "left",
       headerAlign: "center",
       type: "string",
-      commaSeparate: false
+      commaSeparate: false,
     },
     {
       field: "catagoryCst",
@@ -217,7 +217,7 @@ const Category = props => {
       align: "center",
       headerAlign: "center",
       type: "number",
-      commaSeparate: true
+      commaSeparate: true,
     },
     {
       field: "catagoryVat",
@@ -226,11 +226,11 @@ const Category = props => {
       align: "center",
       headerAlign: "center",
       type: "number",
-      commaSeparate: true
-    }
+      commaSeparate: true,
+    },
   ];
 
-  const searchOnChange = event => {
+  const searchOnChange = (event) => {
     var searchData = event.currentTarget.value
       ? event.currentTarget.value.trim()
       : "";
@@ -240,26 +240,29 @@ const Category = props => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         catagoryName: searchData,
-        searchField: ["catagoryName", "catagoryShort", "catagoryCommodityCode"]
-      })
+        searchField: ["catagoryName", "catagoryShort", "catagoryCommodityCode"],
+      }),
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => {
+        (data) => {
           if (data.length <= 0) {
             setEmptyDataDescription("Please search with some other keyword.");
           }
           props.loadCatagory(data);
         },
-        error => {}
+        (error) => {}
       );
   };
   return (
     <div>
-      <SearchInput
-        placeholder="Search Catagory Name, Catagory Short, Commodity code"
-        onChange={searchOnChange}
-      />
+      <div style={{ padding: "8px 0px 8px 0px" }}>
+        <SearchInput
+          length={500}
+          placeholder="Search Catagory Name, Catagory Short, Commodity code"
+          onChange={searchOnChange}
+        />
+      </div>
       <EmptyData
         emptyDataShow={props.catagoryData.length <= 0}
         emptyDataHeader={emptyDataHeader}
@@ -274,7 +277,7 @@ const Category = props => {
         searchColumn={[
           "catagoryName",
           "catagoryShort",
-          "catagoryCommodityCode"
+          "catagoryCommodityCode",
         ]}
         data={props.catagoryData}
         contextMenu={true}
@@ -291,79 +294,79 @@ const Category = props => {
         saveButton={mode !== "view"}
         open={open}
         onCancelClick={() => onCancelClick()}
-        onSaveClick={data => onSaveClick(data)}
+        onSaveClick={(data) => onSaveClick(data)}
         dialogTitle={dialogTitle}
       >
-        <TextField
-          autoFocus={mode === "add" || mode === "edit"}
-          defaultValue={mode === "add" ? "" : gridSelectData.catagoryName}
-          margin="dense"
-          disabled={mode === "view"}
-          id="catagory-name"
-          label="Catagory Name"
-          type="text"
-          inputRef={catagoryNameRef}
-          fullWidth
-        />
-
-        <NumericInput
-          defaultValue={
-            mode === "add"
-              ? ""
-              : parseFloat(gridSelectData.catagoryShort).toLocaleString("en-IN")
-          }
-          id="catagory-short"
-          disabled={mode === "view"}
-          ref={shortRef}
-          fullWidth
-          label="Short"
-          maxLength={5}
-          commaSeparate={true}
-        />
-        <TextField
-          margin="normal"
-          defaultValue={
-            mode === "add" ? "" : gridSelectData.catagoryCommodityCode
-          }
-          id="catagory-commodity-code"
-          disabled={mode === "view"}
-          multiline
-          rowsMax="4"
-          label="Commodity Code"
-          inputRef={commodityRef}
-          type="text"
-          fullWidth
-        />
-
-        <NumericInput
-          defaultValue={
-            mode === "add"
-              ? ""
-              : parseFloat(gridSelectData.catagoryCst).toLocaleString("en-IN")
-          }
-          id="catagory-cst"
-          disabled={mode === "view"}
-          ref={cstRef}
-          fullWidth
-          commaSeparate={true}
-          label="CST"
-          precision={2}
-        />
-
-        <NumericInput
-          defaultValue={
-            mode === "add"
-              ? ""
-              : parseFloat(gridSelectData.catagoryVat).toLocaleString("en-IN")
-          }
-          id="catagory-vat"
-          disabled={mode === "view"}
-          ref={vatRef}
-          fullWidth
-          label="VAT"
-          commaSeparate={true}
-          precision={2}
-        />
+        <div style={{ marginBottom: "8px" }}>
+          <TextField
+            autoFocus={mode === "add" || mode === "edit"}
+            defaultValue={mode === "add" ? "" : gridSelectData.catagoryName}
+            disabled={mode === "view"}
+            required
+            id="catagory-name"
+            label="Catagory Name"
+            ref={catagoryNameRef}
+          />
+        </div>
+        <div style={{ marginBottom: "8px" }}>
+          <NumericInput
+            defaultValue={
+              mode === "add"
+                ? ""
+                : parseFloat(gridSelectData.catagoryShort).toLocaleString(
+                    "en-IN"
+                  )
+            }
+            id="catagory-short"
+            disabled={mode === "view"}
+            ref={shortRef}
+            label="Short"
+            maxLength={5}
+            commaSeparate={true}
+          />
+        </div>
+        <div style={{ marginBottom: "8px" }}>
+          <TextField
+            defaultValue={
+              mode === "add" ? "" : gridSelectData.catagoryCommodityCode
+            }
+            id="catagory-commodity-code"
+            disabled={mode === "view"}
+            label="Commodity Code"
+            ref={commodityRef}
+            type="text"
+          />
+        </div>
+        <div style={{ marginBottom: "8px" }}>
+          <NumericInput
+            defaultValue={
+              mode === "add"
+                ? ""
+                : parseFloat(gridSelectData.catagoryCst).toLocaleString("en-IN")
+            }
+            id="catagory-cst"
+            disabled={mode === "view"}
+            ref={cstRef}
+            commaSeparate={true}
+            label="CST"
+            precision={2}
+          />
+        </div>
+        <div style={{ marginBottom: "8px" }}>
+          <NumericInput
+            defaultValue={
+              mode === "add"
+                ? ""
+                : parseFloat(gridSelectData.catagoryVat).toLocaleString("en-IN")
+            }
+            id="catagory-vat"
+            disabled={mode === "view"}
+            ref={vatRef}
+            label="VAT"
+            commaSeparate={true}
+            precision={2}
+          />
+        </div>
       </FormDialog>
       <ConfimationDialog
         id="catagory-add-confiramtion"
@@ -389,15 +392,15 @@ const Category = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    catagoryData: state.catagoryData
+    catagoryData: state.catagoryData,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    loadCatagory: catagoryData => dispatch(loadCatagory(catagoryData))
+    loadCatagory: (catagoryData) => dispatch(loadCatagory(catagoryData)),
   };
 };
 

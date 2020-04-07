@@ -1,8 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import Fab from "./../../components/fab/Fab";
-import Dialog from "./../../components/dialog/dialog";
-import TextField from "@material-ui/core/TextField";
 import SnackBar from "./../../components/snackbar/snackbar";
 import Table from "./../../components/table/table";
 import { withStyles } from "@material-ui/styles";
@@ -11,31 +8,32 @@ import { connect } from "react-redux";
 import { loadProductData } from "./../../redux/action/customerDetailsAction";
 import SingleSelect from "./../../components/singleselect/singleselect";
 import NumericInput from "./../../components/numericinput/numericinput";
-import MasterInput from "./../../components/masterinput/masterinput";
+import MasterInput from "./../../components/masterinput/masterinputnew";
 import EmptyData from "./../../components/emptydata/emptyData";
 import ConfimationDialog from "./../../components/confimationdialog/confirmationDialog";
 import FormControl from "@material-ui/core/FormControl";
 import { BACKEND_URL } from "./../../constants/constants";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormDialog from "./../../components/dialog/dialog";
+import TextField from "./../../components/textfield/textfield";
 
 const styles = {
   root: {
     width: "60%",
-    margin: "auto"
-  }
+    margin: "auto",
+  },
 };
 
 var measurement = [
   { value: "1", text: "1 Box" },
-  { value: "2", text: "1 Pkt" }
+  { value: "2", text: "1 Pkt" },
 ];
 var qunatity = [
   { value: "1", text: "Pcs" },
-  { value: "2", text: "Chain" }
+  { value: "2", text: "Chain" },
 ];
 
-const ProductMaster = props => {
+const ProductMaster = (props) => {
   const [dialogTitle, setDialogTitle] = React.useState("");
   const [measureValue, setMeasureValue] = React.useState("1");
   const [qunatityValue, setQuantityValue] = React.useState("2");
@@ -91,18 +89,18 @@ const ProductMaster = props => {
       "productCode",
       "productName",
       "catagoryName",
-      "supplierName"
+      "supplierName",
     ];
 
     currentData["mode"] = mode;
     fetch(BACKEND_URL + "/insertProduct", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentData)
+      body: JSON.stringify(currentData),
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => {
+        (data) => {
           if (mode === "add") {
             if (data["status"] === "exist") {
               setMessageContent("Product Code or Name already exists.");
@@ -130,7 +128,7 @@ const ProductMaster = props => {
           }
           setConfirmationOpen(false);
         },
-        error => {}
+        (error) => {}
       );
   }
 
@@ -198,7 +196,7 @@ const ProductMaster = props => {
       align: "center",
       headerAlign: "center",
       type: "number",
-      commaSeparate: false
+      commaSeparate: false,
     },
     {
       field: "productCode",
@@ -207,7 +205,7 @@ const ProductMaster = props => {
       align: "left",
       headerAlign: "center",
       type: "string",
-      commaSeparate: false
+      commaSeparate: false,
     },
     {
       field: "productName",
@@ -216,7 +214,7 @@ const ProductMaster = props => {
       align: "left",
       headerAlign: "center",
       type: "string",
-      commaSeparate: false
+      commaSeparate: false,
     },
     {
       field: "catagoryName",
@@ -225,7 +223,7 @@ const ProductMaster = props => {
       align: "left",
       headerAlign: "center",
       type: "string",
-      commaSeparate: false
+      commaSeparate: false,
     },
     {
       field: "supplierName",
@@ -234,7 +232,7 @@ const ProductMaster = props => {
       align: "left",
       headerAlign: "center",
       type: "string",
-      commaSeparate: false
+      commaSeparate: false,
     },
     {
       field: "productMrp",
@@ -243,13 +241,13 @@ const ProductMaster = props => {
       align: "center",
       headerAlign: "center",
       type: "number",
-      commaSeparate: true
-    }
+      commaSeparate: true,
+    },
   ];
 
   function handleMenuClick(data) {
     var value = props.productData.filter(
-      value => value.productCode === data.id
+      (value) => value.productCode === data.id
     );
     setMode(data.menuId);
     if (value.length > 0) {
@@ -266,7 +264,7 @@ const ProductMaster = props => {
     }
   }
 
-  const searchOnChange = event => {
+  const searchOnChange = (event) => {
     var searchData = event.currentTarget.value
       ? event.currentTarget.value.trim()
       : "";
@@ -280,29 +278,32 @@ const ProductMaster = props => {
           "productCode",
           "productName",
           "catagoryName",
-          "supplierName"
-        ]
-      })
+          "supplierName",
+        ],
+      }),
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => {
+        (data) => {
           if (data.length <= 0) {
             setEmptyDataDescription("Please search with some other keyword.");
           }
           props.productDetails(data);
         },
-        error => {}
+        (error) => {}
       );
   };
 
   var dialogId = "poduct-add-dialog";
   return (
     <div>
-      <SearchInput
-        placeholder="Search Product Name, Brand, Cracker Type"
-        onChange={searchOnChange}
-      />
+      <div style={{ padding: "8px 0px 8px 0px" }}>
+        <SearchInput
+          length={500}
+          placeholder="Search Product Name, Brand, Cracker Type"
+          onChange={searchOnChange}
+        />
+      </div>
       <EmptyData
         emptyDataShow={props.productData <= 0}
         emptyDataHeader={emptyDataHeader}
@@ -319,7 +320,7 @@ const ProductMaster = props => {
           "productCode",
           "productName",
           "catagoryName",
-          "supplierName"
+          "supplierName",
         ]}
         data={props.productData}
         contextMenu={true}
@@ -334,74 +335,83 @@ const ProductMaster = props => {
         onSaveClick={onSaveClick}
         dialogTitle={dialogTitle}
       >
-        <TextField
-          autoFocus={mode === "add"}
-          label="Product Code"
-          type="text"
-          inputRef={productcoderef}
-          defaultValue={mode !== "add" ? gridSelectData.productCode : ""}
-          disabled={mode === "view"}
-          fullWidth
-        />
-        <TextField
-          label="Product Name"
-          type="text"
-          autoFocus={mode === "edit"}
-          inputRef={productnameref}
-          defaultValue={mode !== "add" ? gridSelectData.productName : ""}
-          disabled={mode === "view"}
-          fullWidth
-        />
-        <MasterInput
-          id="catagory-master-input"
-          ref={catagoryRef}
-          parentId={dialogId}
-          keyId={mode !== "add" ? gridSelectData.catagoryId : ""}
-          keyName={mode !== "add" ? gridSelectData.catagoryName : ""}
-          fullWidth
-          label="Catagory"
-          masterId="catagory_name_master"
-          defaultValue={mode !== "add" ? gridSelectData.catagoryName : ""}
-          disabled={mode === "view"}
-        />
-        <MasterInput
-          id="supplier-master-input"
-          ref={supplierRef}
-          parentId={dialogId}
-          fullWidth
-          keyId={mode !== "add" ? gridSelectData.supplierId : ""}
-          keyName={mode !== "add" ? gridSelectData.supplierName : ""}
-          defaultValue={mode !== "add" ? gridSelectData.supplierName : ""}
-          disabled={mode === "view"}
-          label="Supplier"
-          masterId="supplier_name_master"
-        />
-        <NumericInput
-          defaultValue={mode === "add" ? "" : ""}
-          id="product-mrp"
-          disabled={mode === "view"}
-          ref={mrpRef}
-          fullWidth
-          defaultValue={mode !== "add" ? gridSelectData.productMrp : ""}
-          disabled={mode === "view"}
-          label="MRP"
-          commaSeparate={true}
-          precision={2}
-        />
-        <NumericInput
-          defaultValue={mode === "add" ? "" : ""}
-          id="purchase-rate"
-          disabled={mode === "view"}
-          ref={purchaseRateRef}
-          fullWidth
-          label="Purcahse Rate"
-          defaultValue={
-            mode !== "add" ? gridSelectData.productPurchaseRate : ""
-          }
-          disabled={mode === "view"}
-          commaSeparate={true}
-          precision={2}
-        />
+        <div style={{ marginBottom: "8px" }}>
+          <TextField
+            autoFocus={mode === "add"}
+            label="Product Code"
+            type="text"
+            required
+            id="product-code"
+            ref={productcoderef}
+            defaultValue={mode !== "add" ? gridSelectData.productCode : ""}
+            disabled={mode === "view"}
+          />
+        </div>
+        <div style={{ marginBottom: "8px" }}>
+          <TextField
+            label="Product Name"
+            required
+            id="product-name"
+            type="text"
+            autoFocus={mode === "edit"}
+            ref={productnameref}
+            defaultValue={mode !== "add" ? gridSelectData.productName : ""}
+            disabled={mode === "view"}
+          />
+        </div>
+        <div style={{ marginBottom: "8px" }}>
+          <MasterInput
+            id="catagory-master-input"
+            ref={catagoryRef}
+            keyId={mode !== "add" ? gridSelectData.catagoryId : ""}
+            label="Catagory"
+            required
+            masterId="catagory_name_master"
+            defaultValue={mode !== "add" ? gridSelectData.catagoryName : ""}
+            disabled={mode === "view"}
+          />
+        </div>
+        <div style={{ marginBottom: "8px" }}>
+          <MasterInput
+            id="supplier-master-input"
+            ref={supplierRef}
+            required
+            keyId={mode !== "add" ? gridSelectData.supplierId : ""}
+            defaultValue={mode !== "add" ? gridSelectData.supplierName : ""}
+            disabled={mode === "view"}
+            label="Supplier"
+            masterId="supplier_name_master"
+          />
+        </div>
+        <div style={{ marginBottom: "8px" }}>
+          <NumericInput
+            defaultValue={mode === "add" ? "" : ""}
+            id="product-mrp"
+            required
+            disabled={mode === "view"}
+            ref={mrpRef}
+            defaultValue={mode !== "add" ? gridSelectData.productMrp : ""}
+            disabled={mode === "view"}
+            label="MRP"
+            commaSeparate={true}
+            precision={2}
+          />
+        </div>
+        <div style={{ marginBottom: "8px" }}>
+          <NumericInput
+            defaultValue={mode === "add" ? "" : ""}
+            id="purchase-rate"
+            disabled={mode === "view"}
+            ref={purchaseRateRef}
+            label="Purcahse Rate"
+            defaultValue={
+              mode !== "add" ? gridSelectData.productPurchaseRate : ""
+            }
+            disabled={mode === "view"}
+            commaSeparate={true}
+            precision={2}
+          />
+        </div>
         <FormControl disabled={mode === "view"} style={{ display: "block" }}>
           <InputLabel id="measurement-label">Measurement</InputLabel>
           <SingleSelect
@@ -463,15 +473,15 @@ const ProductMaster = props => {
   );
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    productDetails: productData => dispatch(loadProductData(productData))
+    productDetails: (productData) => dispatch(loadProductData(productData)),
   };
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    productData: state.loadProduct
+    productData: state.loadProduct,
   };
 };
 

@@ -90,7 +90,6 @@ const MasterInput = React.forwardRef((props, ref) => {
     }
 
     React.useEffect(() => {
-      console.log(mainRef);
       if (props.keyId) {
         mainRef.current.setAttribute("keyid", props.keyId);
         mainRef.current.setAttribute("keyvalue", props.keyName);
@@ -118,12 +117,12 @@ const MasterInput = React.forwardRef((props, ref) => {
         offset: 0,
         size: 5,
         masterId: props.masterId,
-        checkCount: "true"
-      })
+        checkCount: "true",
+      }),
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => {
+        (data) => {
           if (data.value) {
             var count = Math.ceil(data.count / 5);
             var rect = currentTarget.getBoundingClientRect();
@@ -148,16 +147,19 @@ const MasterInput = React.forwardRef((props, ref) => {
             setMenuData(data.value);
             setSelectedId("");
             setSelectIndex(-1);
+            mainRef.current.removeAttribute("keyid");
+            mainRef.current.removeAttribute("keyvalue");
             render.style.display = "block";
           }
         },
-        error => {}
+        (error) => {}
       );
   }
 
   function onKeyUp(event) {
     event.preventDefault();
     if ((event.which === 38 || event.which === 40) && menuData.length > 0) {
+      event.stopPropagation();
       if (event.which === 40) {
         if (selectedIndex === -1) {
           setSelectedId(menuData[selectedIndex + 1].id);
@@ -206,12 +208,18 @@ const MasterInput = React.forwardRef((props, ref) => {
         setDefaultValue(menuData[selectedIndex].setText);
         document.getElementById(renderId).style.display = "none";
         inputRef.current.focus();
+        if (props.onComplete) {
+          props.onComplete();
+        }
       }
+    } else if (event.which === 37 || event.which === 39) {
+      event.stopPropagation();
     }
   }
 
   function onClickHandler(event) {
-    var data = menuData.filter(value => value.id === event.target.id);
+    inputRef.current.focus();
+    var data = menuData.filter((value) => value.id === event.target.id);
     if (data.length > 0) {
       var value = data[0].setText;
       inputRef.current.value = value.toString();
@@ -219,7 +227,9 @@ const MasterInput = React.forwardRef((props, ref) => {
       mainRef.current.setAttribute("keyvalue", data[0].setText);
       setDefaultValue(value);
       document.getElementById(renderId).style.display = "none";
-      inputRef.current.focus();
+      if (props.onComplete) {
+        props.onComplete();
+      }
     }
   }
 
@@ -232,12 +242,12 @@ const MasterInput = React.forwardRef((props, ref) => {
         searchValue: inputRef.current.value,
         offset: offset,
         size: 5,
-        masterId: props.masterId
-      })
+        masterId: props.masterId,
+      }),
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => {
+        (data) => {
           inputRef.current.focus();
           setCurrentPage(nextPage);
           setMenuData(data.value);
@@ -246,7 +256,7 @@ const MasterInput = React.forwardRef((props, ref) => {
             setSelectedId(data.value[selectIndex].id);
           }
         },
-        error => {}
+        (error) => {}
       );
   }
 
@@ -280,12 +290,12 @@ const MasterInput = React.forwardRef((props, ref) => {
           searchValue: inputRef.current.value,
           masterId: props.masterId,
           offset: 0,
-          size: 5
-        })
+          size: 5,
+        }),
       })
-        .then(res => res.json())
+        .then((res) => res.json())
         .then(
-          data => {
+          (data) => {
             if (data.value && data.value.length > 0) {
               inputRef.current.value = data.value[0].setText.toString();
               setSelectedId(data.value[0].id);
@@ -294,8 +304,11 @@ const MasterInput = React.forwardRef((props, ref) => {
             } else {
               inputRef.current.value = "";
             }
+            if (props.onComplete) {
+              props.onComplete();
+            }
           },
-          error => {}
+          (error) => {}
         );
     }
   }
@@ -304,122 +317,172 @@ const MasterInput = React.forwardRef((props, ref) => {
     inputRef.current.focus();
   }
 
+  function onKeydown(event) {
+    event.stopPropagation();
+    if (
+      (event.which === 37 ||
+        event.which === 39 ||
+        event.which === 38 ||
+        event.which === 40) &&
+      selectedIndex > -1
+    ) {
+      event.preventDefault();
+    }
+    if (event.which === 9) {
+      fetch(BACKEND_URL + "/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          searchValue: inputRef.current.value,
+          masterId: props.masterId,
+          offset: 0,
+          size: 5,
+        }),
+      })
+        .then((res) => res.json())
+        .then(
+          (data) => {
+            if (data.value && data.value.length > 0) {
+              inputRef.current.value = data.value[0].setText.toString();
+              setSelectedId(data.value[0].id);
+              mainRef.current.setAttribute("keyid", data.value[0].id);
+              mainRef.current.setAttribute("keyvalue", data.value[0].setText);
+            } else {
+              inputRef.current.value = "";
+            }
+            if (props.onComplete) {
+              props.onComplete();
+            }
+          },
+          (error) => {}
+        );
+      document.getElementById(renderId).style.display = "none";
+    }
+  }
+
   return (
     <React.Fragment>
-      <TextField
-        id={props.id}
-        fullWidth={props.fullWidth}
-        style={props.style}
-        label={props.label}
-        onChange={onChange}
-        disabled={props.disabled}
-        inputRef={inputRef}
-        fullWidth={props.fullWidth}
-        ref={mainRef}
-        autoComplete="off"
-        label={props.label}
-        onKeyUp={onKeyUp}
-        onBlur={onFocusOut}
-        defaultValue={defaultValue}
-      />
-      <Paper
-        id={renderId}
-        elevation={3}
-        style={{
-          width: "180px",
-          height: "auto",
-          display: "none",
-          zIndex: 30,
-          maxWidth: "200px"
-        }}
-        onClick={onPaperClick}
-      >
-        <div style={{ borderBottom: "1px solid grey", minHeight: "32px" }}>
-          <ListData
-            marginLeft="0"
-            values={menuData}
-            initial={selectedId}
-            selectIndex={selectedIndex}
-            id="sidedrawer-list"
-            clickSideMenuHandler={onClickHandler}
-            disableTypography={true}
-            style={{
-              padding: "2px",
-              fontSize: "25px",
-              height: "30px",
-              display: "grid"
-            }}
-            listItemStyle={{
-              height: "inherit",
-              fontSize: "17px",
-              margin: "2px",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              fontFamily: "arial sans-serif",
-              display: "table-cell",
-              verticalAlign: "middle"
-            }}
-          />
-        </div>
-        <div
+      <div>
+        <TextField
+          id={props.id}
+          fullWidth={props.fullWidth}
+          style={props.style}
+          label={props.label}
+          onChange={onChange}
+          disabled={props.disabled}
+          inputRef={inputRef}
+          autoFocus={props.autoFocus}
+          fullWidth={props.fullWidth}
+          ref={mainRef}
+          autoComplete="off"
+          label={props.label}
+          onKeyUp={onKeyUp}
+          onKeyDown={onKeydown}
+          onBlur={onFocusOut}
+          InputProps={props.InputProps}
+          defaultValue={defaultValue}
+        />
+        <Paper
+          id={renderId}
+          elevation={3}
           style={{
-            textAlign: "right",
-            paddingRight: "8px",
-            background: "#e3e4e8",
-            height: "28px",
-            userSelect: "none"
+            width: "180px",
+            height: "auto",
+            display: "none",
+            zIndex: 30,
+            maxWidth: "200px",
           }}
+          onClick={onPaperClick}
         >
-          <Icon
+          <div style={{ borderBottom: "1px solid grey", minHeight: "32px" }}>
+            <ListData
+              tabIndex={-1}
+              marginLeft="0"
+              values={menuData}
+              initial={selectedId}
+              selectIndex={selectedIndex}
+              id="sidedrawer-list"
+              clickSideMenuHandler={onClickHandler}
+              disableTypography={true}
+              style={{
+                padding: "2px",
+                fontSize: "25px",
+                height: "30px",
+                display: "grid",
+              }}
+              listItemStyle={{
+                height: "inherit",
+                fontSize: "17px",
+                margin: "2px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontFamily: "var(--var-input-font-family)",
+                display: "table-cell",
+                verticalAlign: "middle",
+              }}
+            />
+          </div>
+          <div
             style={{
-              fontSize: "17px",
-              verticalAlign: "middle",
-              color: currentPage > 1 && totalPage > 1 ? "#35db5e" : "black",
-              cursor: currentPage > 1 && totalPage > 1 ? "pointer" : "default"
-            }}
-            icon="leftarrow"
-            onClick={onPreviousClick}
-          />
-          <Typography
-            variant="button"
-            display="inline"
-            gutterBottom
-            style={{ verticalAlign: "middle", cursor: "default" }}
-          >
-            {currentPage}
-          </Typography>
-          <Typography
-            variant="button"
-            display="inline"
-            gutterBottom
-            style={{ cursor: "default", verticalAlign: "middle" }}
-          >
-            /
-          </Typography>
-          <Typography
-            variant="button"
-            display="inline"
-            gutterBottom
-            style={{
-              verticalAlign: "middle",
-              marginRight: "4px",
-              cursor: "default"
+              textAlign: "right",
+              paddingRight: "8px",
+              background: "#e3e4e8",
+              height: "28px",
+              userSelect: "none",
             }}
           >
-            {totalPage}
-          </Typography>
-          <Icon
-            style={{
-              fontSize: "17px",
-              verticalAlign: "middle",
-              color: currentPage < totalPage ? "#35db5e" : "black",
-              cursor: currentPage < totalPage ? "pointer" : "default"
-            }}
-            icon="rightarrow"
-            onClick={onNextClick}
-          />
-        </div>
-      </Paper>
+            <Icon
+              style={{
+                fontSize: "17px",
+                verticalAlign: "middle",
+                color: currentPage > 1 && totalPage > 1 ? "#35db5e" : "black",
+                cursor:
+                  currentPage > 1 && totalPage > 1 ? "pointer" : "default",
+              }}
+              icon="leftarrow"
+              onClick={onPreviousClick}
+            />
+            <Typography
+              variant="button"
+              display="inline"
+              gutterBottom
+              style={{ verticalAlign: "middle", cursor: "default" }}
+            >
+              {currentPage}
+            </Typography>
+            <Typography
+              variant="button"
+              display="inline"
+              gutterBottom
+              style={{ cursor: "default", verticalAlign: "middle" }}
+            >
+              /
+            </Typography>
+            <Typography
+              variant="button"
+              display="inline"
+              gutterBottom
+              style={{
+                verticalAlign: "middle",
+                marginRight: "4px",
+                cursor: "default",
+              }}
+            >
+              {totalPage}
+            </Typography>
+            <Icon
+              style={{
+                fontSize: "17px",
+                verticalAlign: "middle",
+                color: currentPage < totalPage ? "#35db5e" : "black",
+                cursor: currentPage < totalPage ? "pointer" : "default",
+              }}
+              icon="rightarrow"
+              onClick={onNextClick}
+            />
+          </div>
+        </Paper>
+      </div>
     </React.Fragment>
   );
 });

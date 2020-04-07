@@ -1,5 +1,5 @@
 import React from "react";
-import TextField from "@material-ui/core/TextField";
+import "./numericinput.css";
 
 const NumericField = React.forwardRef((props, ref) => {
   const refs = ref;
@@ -7,6 +7,12 @@ const NumericField = React.forwardRef((props, ref) => {
   if (valueData && props.commaSeparate) {
     valueData = parseFloat(valueData).toLocaleString("en-IN");
   }
+
+  React.useEffect(() => {
+    if (props.autoFocus) {
+      ref.current.focus();
+    }
+  });
 
   function handleKeyPress(event) {
     var value = ref.current.value.replace(/,/g, "");
@@ -34,36 +40,80 @@ const NumericField = React.forwardRef((props, ref) => {
     }
   }
 
-  const handleFocusOut = event => {
-    if (props.commaSeparate && refs.current.value) {
-      var value = refs.current.value.replace(/,/g, "");
+  const handleFocusOut = (event) => {
+    if (props.commaSeparate && ref.current.value) {
+      var value = ref.current.value.replace(/,/g, "");
       value = parseFloat(value).toLocaleString("en-IN");
-      refs.current.value = value;
+      ref.current.value = value;
       if (props.precision && value.indexOf(".") < 0) {
         refs.current.value = value + "." + "0";
       }
     }
-    if (!refs.current.value) {
-      refs.current.value = "";
+    if (!ref.current.value) {
+      ref.current.value = "";
+    }
+    if (props.onFocusOut) {
+      props.onFocusOut();
+    }
+    if (props.required) {
+      if (!ref.current.value) {
+        ref.current.classList.add("invalid");
+      } else {
+        ref.current.classList.remove("invalid");
+      }
+    }
+  };
+  const onFocus = function () {
+    if (ref.current) {
+      var value = ref.current.value.replace(/,/g, "");
+      if (!isNaN(value)) {
+        ref.current.value = value;
+      }
+    }
+    if (props.onFocus) {
+      props.onFocus();
+    }
+  };
+  var className = props.required && !props.disabled ? "required " : "";
+  var inputClassName = props.disabled ? "input-disabled " : "";
+  inputClassName =
+    inputClassName + "text-input-class text-input-size-m numeric-input";
+  className = className + " text-label";
+
+  const showLabel = function () {
+    console.log(props.label);
+    if (props.label) {
+      return (
+        <label className={className} title={props.label}>
+          {props.label}
+        </label>
+      );
+    }
+  };
+  const onkeydown = function (event) {
+    if (props.onkeydown) {
+      props.onkeydown(event);
     }
   };
   return (
     <React.Fragment>
-      <TextField
-        inputRef={ref}
-        autoFocus={props.autoFocus}
-        defaultValue={valueData}
-        id={props.id}
-        disabled={props.disabled}
-        fullWidth={props.fullWidth}
-        style={props.style}
-        label={props.label}
-        onKeyPress={handleKeyPress}
-        onBlur={handleFocusOut}
-        inputProps={{
-          style: { textAlign: "right", padding: "6px 6px" }
-        }}
-      />
+      <div style={props.style} id={props.id} className="text-field-m">
+        {showLabel()}
+        <div className="text-input-div">
+          <input
+            ref={ref}
+            id={props.id + "_target"}
+            disabled={props.disabled}
+            defaultValue={props.defaultValue}
+            autoFocus={props.autoFocus}
+            className={inputClassName}
+            onKeyPress={handleKeyPress}
+            onBlur={handleFocusOut}
+            onFocus={onFocus}
+            onKeyDown={onkeydown}
+          />
+        </div>
+      </div>
     </React.Fragment>
   );
 });

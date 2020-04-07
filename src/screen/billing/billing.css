@@ -1,0 +1,11 @@
+.rdg-viewport {
+  height: auto !important;
+  overflow: auto;
+}
+
+div.rdg-row div.rdg-cell:nth-of-type(3),
+div.rdg-row div.rdg-cell:nth-of-type(4),
+div.rdg-row div.rdg-cell:nth-of-type(5),
+div.rdg-row div.rdg-cell:nth-of-type(6) {
+  text-align: right;
+}

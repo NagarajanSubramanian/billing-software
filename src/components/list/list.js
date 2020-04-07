@@ -7,23 +7,23 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Icon from "./../icons/icons";
 import { makeStyles } from "@material-ui/core/styles";
 
-const styles = makeStyles(theme => ({
+const styles = makeStyles((theme) => ({
   listItemText: {
-    marginBottom: 0
+    marginBottom: 0,
   },
   selected: {
-    color: "blue"
+    color: "blue",
   },
   unselected: {
-    color: "black"
+    color: "black",
   },
   listIcon: {
     color: "red",
-    minWidth: 30
+    minWidth: 30,
   },
   focusVisible: {
-    color: "blue"
-  }
+    color: "blue",
+  },
 }));
 
 const ListData = React.forwardRef((props, ref) => {
@@ -32,6 +32,7 @@ const ListData = React.forwardRef((props, ref) => {
     if (value.subItem && value.close) {
       return (
         <ListData
+          tabIndex={props.tabIndex}
           key={value.id}
           values={value.subItem}
           classesData={classesData}
@@ -62,7 +63,7 @@ const ListData = React.forwardRef((props, ref) => {
   const marginLeft = parseInt(props.marginLeft);
   var classesData = styles();
 
-  const setListItemText = text => {
+  const setListItemText = (text) => {
     return (
       <ListItemText
         disableTypography={props.disableTypography}
@@ -84,6 +85,7 @@ const ListData = React.forwardRef((props, ref) => {
             <ListItem
               button
               id={text.id}
+              tabIndex={props.tabIndex}
               key={text.id}
               parentid={text.parentId}
               style={props.style}
